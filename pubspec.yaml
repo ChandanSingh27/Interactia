@@ -38,6 +38,7 @@ dependencies:
 
   #fonts
   google_fonts: ^5.0.0
+  icons_plus: ^4.0.0
 
 
 dev_dependencies:
