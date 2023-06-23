@@ -27,7 +27,7 @@ class _CustomIconButtonState extends State<CustomIconButton> {
             BoxShadow(
               color: widget.backgroundColor?.withOpacity(0.7)??AppConstantsColor.blueLight.withOpacity(0.7),
               blurStyle: BlurStyle.outer,
-              blurRadius: 20
+              blurRadius: 5
             )
           ]
         ),

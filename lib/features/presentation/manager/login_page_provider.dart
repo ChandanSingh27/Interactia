@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 class LoginPageProvider with ChangeNotifier {
   bool passwordVisible = true;
   bool loginButtonDisable = true;
+  bool loadingLoader = false;
 
 
   passwordVisibleToggle(){
@@ -10,8 +11,13 @@ class LoginPageProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  loginButtonDisableToggle(bool value){
+  isLoadingButtonEnable(bool value){
     loginButtonDisable = value;
+    notifyListeners();
+  }
+
+  loadingLoaderToggle(){
+    loadingLoader = !loadingLoader;
     notifyListeners();
   }
 

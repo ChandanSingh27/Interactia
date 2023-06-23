@@ -1,14 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:taskhub/features/presentation/manager/internet_checking.dart';
 import 'package:taskhub/features/presentation/manager/login_page_provider.dart';
-import 'package:taskhub/features/presentation/widgets/buttons/custom_icons_button.dart';
+import 'package:taskhub/features/presentation/widgets/custom_dialog/app_dialogs.dart';
+import 'package:taskhub/firebase/authentication/firebase_authentication.dart';
 import 'package:taskhub/utility/constants_text.dart';
 import 'package:taskhub/utility/constants_value.dart';
 import 'package:taskhub/utility/constants_color.dart';
 import 'package:taskhub/utility/text_style.dart';
-
-import '../../widgets/buttons/custom_button.dart';
+import '../../widgets/custom_buttons/custom_button.dart';
+import '../../widgets/custom_buttons/custom_icons_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -23,17 +26,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  enableOrDisableLoginButton(){
-    if(emailController.text.isNotEmpty && passwordController.text.length>8){
-      Provider.of<LoginPageProvider>(context,listen: false).loginButtonDisableToggle(false);
-    }else{
-      Provider.of<LoginPageProvider>(context,listen: false).loginButtonDisableToggle(true);
-    }
-  }
+  FocusNode emailFocus = FocusNode();
+  FocusNode passwordFocus = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppConstantsColor.black,
         body: Stack(
           children: [
             Positioned(
@@ -70,64 +68,49 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
 
-                        Text(AppConstantsText.appName,style: AppConstantTextStyle.headingSemiBold_20(),),
+                        Text(AppConstantsText.appName,style: Theme.of(context).textTheme.titleLarge,),
 
                         const SizedBox(height: 40,),
 
                         Consumer<LoginPageProvider>(builder: (context, provider, child) => TextFormField(
                           controller: emailController,
-                          style: AppConstantTextStyle.textFormFieldStyle(),
+                          style: AppConstantTextStyle.formFieldTextStyle(),
                           cursorColor: AppConstantsColor.appTextLightShadeColor,
+                          focusNode: emailFocus,
                           decoration: InputDecoration(
-                            filled: true,
-                            fillColor: AppConstantsColor.blackLight,
-                            contentPadding: EdgeInsets.symmetric(horizontal: AppConstants.constantsAppPadding),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: AppConstantsColor.blackLight),
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: AppConstantsColor.blackLight),
-                            ),
-                            hintText: AppConstantsText.email,
-                            hintStyle: AppConstantTextStyle.textFormFieldStyle(),
+                              hintText: AppConstantsText.email
                           ),
                           onChanged: (value) {
                             if(value.isNotEmpty && passwordController.text.length >= 8){
-                              provider.loginButtonDisableToggle(false);
+                              provider.isLoadingButtonEnable(false);
                             }else{
-                              provider.loginButtonDisableToggle(true);
+                              provider.isLoadingButtonEnable(true);
                             }
                           },
+                          onEditingComplete: () => FocusScope.of(context).requestFocus(passwordFocus),
                         ),),
                         const SizedBox(height: 10,),
 
                         Consumer<LoginPageProvider>(builder: (context, provider, child) => TextFormField(
                           controller: passwordController,
-                          style: AppConstantTextStyle.textFormFieldStyle(),
+                          style: AppConstantTextStyle.formFieldTextStyle(),
+                          focusNode: passwordFocus,
+                          textAlignVertical: TextAlignVertical.center,
                           obscureText: provider.passwordVisible,
-                          obscuringCharacter: "*",
+                          obscuringCharacter: "x",
                           cursorColor: AppConstantsColor.appTextLightShadeColor,
                           decoration: InputDecoration(
-                              filled: true,
-                              fillColor: AppConstantsColor.blackLight,
                               suffixIcon: Consumer<LoginPageProvider>(builder: (context, provider, child) => GestureDetector(onTap: () => provider.passwordVisibleToggle(),child: Icon(provider.passwordVisible?FontAwesome.eye_slash:FontAwesome.eye,color: provider.passwordVisible?AppConstantsColor.appTextLightShadeColor:AppConstantsColor.blueLight,size: 15,),)),
-                              contentPadding: EdgeInsets.symmetric(horizontal: AppConstants.constantsAppPadding),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: AppConstantsColor.blackLight),
-                              ),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: AppConstantsColor.blackLight),
-                              ),
                               hintText: AppConstantsText.password,
-                              hintStyle: AppConstantTextStyle.textFormFieldStyle()
                           ),
                           onChanged: (value) {
                             if(value.length >= 8 && emailController.text.isNotEmpty){
-                              provider.loginButtonDisableToggle(false);
+                              provider.isLoadingButtonEnable(false);
                             }else{
-                              provider.loginButtonDisableToggle(true);
+                              provider.isLoadingButtonEnable(true);
                             }
                           },
+                          onTapOutside: (event) => FocusScope.of(context).unfocus(),
                         ),),
                         const SizedBox(height: 10,),
 
@@ -139,9 +122,17 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 10,),
 
-                        Selector<LoginPageProvider, bool>(
-                            builder: (context, loginButtonDisable, child) => CustomButton(onTap: (){},text: AppConstantsText.login,backgroundColor: AppConstantsColor.blueLight,disableButton: loginButtonDisable),
-                            selector: (context, loginProvider) => loginProvider.loginButtonDisable,),
+                        Consumer2<LoginPageProvider,InternetCheckingService>(builder: (context, provider, internetProvider, child) => CustomButton(onTap: (){
+                          FocusScope.of(context).unfocus();
+                          if(internetProvider.isConnected){
+                            provider.isLoadingButtonEnable(true);
+                            provider.loadingLoaderToggle();
+                            FirebaseAuthentication.loginWithEmailPassword(emailController.text.trim(), passwordController.text.trim());
+                            Future.delayed(const Duration(seconds: 2),() => provider.loadingLoaderToggle(),);
+                          }else{
+                            AppDialog.noInternetDialog();
+                          }
+                        },text: AppConstantsText.login,backgroundColor: AppConstantsColor.blueLight,disableButton: provider.loginButtonDisable,loader: provider.loadingLoader),),
 
                         const SizedBox(height: 20,),
 
@@ -152,6 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                             Expanded(child: Divider(color: AppConstantsColor.appTextLightShadeColor,)),
                           ],
                         ),
+
                         const SizedBox(height: 20,),
                         CustomIconButton(onTap: (){}, text: AppConstantsText.continueWithGoogle,icon: Logo(Logos.google),backgroundColor: Colors.white,),
                         const SizedBox(height: 15,),
@@ -172,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(AppConstantsText.donTHaveAnAccount,style: AppConstantTextStyle.textFormFieldStyle(),),
+              Text(AppConstantsText.donTHaveAnAccount,style: AppConstantTextStyle.formFieldTextStyle(),),
               TextButton(onPressed: (){}, child: Text(AppConstantsText.signup))
             ],
           )
