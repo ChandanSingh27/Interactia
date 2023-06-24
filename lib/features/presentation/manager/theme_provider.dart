@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../utility/constants_color.dart';
 import '../../../utility/constants_value.dart';
-import '../../../utility/text_style.dart';
+import '../../../utility/constants_text_style.dart';
 
 class ThemeProvider with ChangeNotifier{
 
@@ -12,6 +12,7 @@ class ThemeProvider with ChangeNotifier{
 
 
   ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
     scaffoldBackgroundColor: AppConstantsColor.black,
     fontFamily: GoogleFonts.poppins().fontFamily,
     inputDecorationTheme: InputDecorationTheme(
@@ -22,19 +23,17 @@ class ThemeProvider with ChangeNotifier{
           borderRadius: BorderRadius.circular(10)
       ),
       contentPadding: EdgeInsets.symmetric(horizontal: AppConstants.constantsAppPadding),
-      hintStyle: AppConstantTextStyle.formFieldTextStyle(),
+      hintStyle: AppConstantTextStyle.formFieldHintTextStyle(),
     ),
     textTheme: TextTheme(
-      titleLarge: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w600,
-          color: AppConstantsColor.white
-      )
+      titleLarge: AppConstantTextStyle.headingLargeBold_28(color: AppConstantsColor.white),
+      titleMedium: AppConstantTextStyle.headingMediumSemiBold_28(color: AppConstantsColor.white),
+      bodySmall: AppConstantTextStyle.bodySmall_18(color: AppConstantsColor.white.withOpacity(0.5))
     ),
   );
 
   ThemeData lightTheme = ThemeData(
-
+    brightness: Brightness.light,
     scaffoldBackgroundColor: AppConstantsColor.white,
 
     fontFamily: GoogleFonts.poppins().fontFamily,
@@ -47,15 +46,13 @@ class ThemeProvider with ChangeNotifier{
           borderSide: BorderSide.none,
           borderRadius: BorderRadius.circular(10)
       ),
-      hintStyle: AppConstantTextStyle.formFieldTextStyle(),
+      hintStyle: AppConstantTextStyle.formFieldHintTextStyle(),
     ),
 
     textTheme: TextTheme(
-        titleLarge: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w600,
-            color: AppConstantsColor.matteBlack
-        )
+        titleLarge: AppConstantTextStyle.headingLargeBold_28(color: AppConstantsColor.matteBlack),  
+        titleMedium: AppConstantTextStyle.headingMediumSemiBold_28(color: AppConstantsColor.matteBlack),
+        bodySmall: AppConstantTextStyle.bodySmall_18(color: AppConstantsColor.matteBlack.withOpacity(0.5))
     ),
   );
 

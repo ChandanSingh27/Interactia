@@ -2,13 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
 import 'package:taskhub/features/presentation/manager/login_page_provider.dart';
 import 'package:taskhub/features/presentation/manager/theme_provider.dart';
 import 'package:taskhub/features/presentation/pages/authentication_pages/login_page.dart';
-import 'package:taskhub/firebase/push_notification/push_notifiaction.dart';
+import 'package:taskhub/firebase/push_notification/push_notification.dart';
 import 'package:taskhub/locator.dart';
 import 'firebase/firebase_options.dart';
 
@@ -39,7 +38,6 @@ class TaskHubApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("=====>build");
     return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
 
       return MaterialApp(

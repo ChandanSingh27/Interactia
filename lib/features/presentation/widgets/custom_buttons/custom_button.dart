@@ -23,7 +23,7 @@ class _CustomButtonState extends State<CustomButton> {
         width: double.infinity,
         height: 45,
         decoration: BoxDecoration(
-            color: widget.disableButton ? widget.backgroundColor?.withOpacity(0.5) : widget.backgroundColor,
+            color: widget.disableButton ? widget.backgroundColor?.withOpacity(0.5) : widget.backgroundColor.withOpacity(0.8),
             borderRadius: BorderRadius.circular(10),
             boxShadow: <BoxShadow>[
               BoxShadow(

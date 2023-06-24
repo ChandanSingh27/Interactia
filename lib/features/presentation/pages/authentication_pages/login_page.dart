@@ -6,12 +6,14 @@ import 'package:taskhub/features/presentation/manager/internet_checking.dart';
 import 'package:taskhub/features/presentation/manager/login_page_provider.dart';
 import 'package:taskhub/features/presentation/widgets/custom_dialog/app_dialogs.dart';
 import 'package:taskhub/firebase/authentication/firebase_authentication.dart';
+import 'package:taskhub/locator.dart';
 import 'package:taskhub/utility/constants_text.dart';
 import 'package:taskhub/utility/constants_value.dart';
 import 'package:taskhub/utility/constants_color.dart';
-import 'package:taskhub/utility/text_style.dart';
+import 'package:taskhub/utility/constants_text_style.dart';
 import '../../widgets/custom_buttons/custom_button.dart';
 import '../../widgets/custom_buttons/custom_icons_button.dart';
+import 'login_with_phone.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -31,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Scaffold(
         body: Stack(
           children: [
@@ -74,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
 
                         Consumer<LoginPageProvider>(builder: (context, provider, child) => TextFormField(
                           controller: emailController,
-                          style: AppConstantTextStyle.formFieldTextStyle(),
+                          style: isDark ? AppConstantTextStyle.formFieldTextStyleWhite() : AppConstantTextStyle.formFieldTextStyleBlack(),
                           cursorColor: AppConstantsColor.appTextLightShadeColor,
                           focusNode: emailFocus,
                           decoration: InputDecoration(
@@ -93,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
 
                         Consumer<LoginPageProvider>(builder: (context, provider, child) => TextFormField(
                           controller: passwordController,
-                          style: AppConstantTextStyle.formFieldTextStyle(),
+                          style: isDark ? AppConstantTextStyle.formFieldTextStyleWhite() : AppConstantTextStyle.formFieldTextStyleBlack(),
                           focusNode: passwordFocus,
                           textAlignVertical: TextAlignVertical.center,
                           obscureText: provider.passwordVisible,
@@ -122,17 +125,19 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 10,),
 
-                        Consumer2<LoginPageProvider,InternetCheckingService>(builder: (context, provider, internetProvider, child) => CustomButton(onTap: (){
+                        Consumer2<LoginPageProvider,InternetCheckingService>(builder: (context, provider, internetProvider, child) => CustomButton(onTap: () async{
                           FocusScope.of(context).unfocus();
                           if(internetProvider.isConnected){
                             provider.isLoadingButtonEnable(true);
                             provider.loadingLoaderToggle();
-                            FirebaseAuthentication.loginWithEmailPassword(emailController.text.trim(), passwordController.text.trim());
+                            getIt.get<FirebaseAuthentication>().loginWithEmailPassword(context ,emailController.text.trim(), passwordController.text.trim()).then((value) {
+                              if(value) Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginWithPhone(),));
+                            });
                             Future.delayed(const Duration(seconds: 2),() => provider.loadingLoaderToggle(),);
                           }else{
                             AppDialog.noInternetDialog();
                           }
-                        },text: AppConstantsText.login,backgroundColor: AppConstantsColor.blueLight,disableButton: provider.loginButtonDisable,loader: provider.loadingLoader),),
+                        },text: AppConstantsText.login,backgroundColor: AppConstantsColor.blueLight,disableButton: provider.loginButtonDisable,loader: provider.loginButtonLoader),),
 
                         const SizedBox(height: 20,),
 
@@ -145,9 +150,33 @@ class _LoginPageState extends State<LoginPage> {
                         ),
 
                         const SizedBox(height: 20,),
-                        CustomIconButton(onTap: (){}, text: AppConstantsText.continueWithGoogle,icon: Logo(Logos.google),backgroundColor: Colors.white,),
+                        Consumer<LoginPageProvider>(builder: (context, loginProvider, child) {
+                           return CustomIconButton(onTap: (){
+                             try{
+                               loginProvider.toggleEnableContinueWithGoogleButtonAndLoader();
+                               print("==>> 1 ${loginProvider.enableContinueWithGoogleButton}");
+                             }catch(error){
+                               print("eerror");
+                             }finally{
+                               Future.delayed(Duration(seconds: 5),() => loginProvider.toggleEnableContinueWithGoogleButtonAndLoader(),);
+                               print("==>> 2 ${loginProvider.enableContinueWithGoogleButton}");
+                             }
+                           }, text: AppConstantsText.continueWithGoogle,icon: Logo(Logos.google),backgroundColor: Colors.white,enableButton: loginProvider.enableContinueWithGoogleButton,loader: loginProvider.continueWithGoogleButtonLoader,);
+                        },),
                         const SizedBox(height: 15,),
-                        CustomIconButton(onTap: (){}, text: AppConstantsText.continueWithPhone,icon: const Icon(Icons.phone,color: Colors.white,),backgroundColor: AppConstantsColor.blueLight,textColor: Colors.white,)
+                        Consumer<LoginPageProvider>(builder: (context, loginProvider, child) {
+                          return CustomIconButton(onTap: (){
+                            try{
+                              loginProvider.toggleEnableContinueWithPhoneButtonAndLoader();
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginWithPhone(),));
+                            }catch(error){
+                              print("eerror");
+                            }finally{
+                              Future.delayed(const Duration(seconds: 5),() => loginProvider.toggleEnableContinueWithPhoneButtonAndLoader(),);
+                            }
+                          }, text: AppConstantsText.continueWithPhone,icon: const Icon(Icons.phone,color: Colors.white,),backgroundColor: AppConstantsColor.blueLight,textColor: Colors.white,loader: loginProvider.continueWithPhoneButtonLoader,enableButton: loginProvider.enableContinueWithPhoneButton,);
+                        },)
+
 
                       ],
                     ),
@@ -164,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(AppConstantsText.donTHaveAnAccount,style: AppConstantTextStyle.formFieldTextStyle(),),
+              Text(AppConstantsText.donTHaveAnAccount,style: isDark ? AppConstantTextStyle.formFieldTextStyleWhite() : AppConstantTextStyle.formFieldTextStyleWhite(),),
               TextButton(onPressed: (){}, child: Text(AppConstantsText.signup))
             ],
           )

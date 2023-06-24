@@ -51,6 +51,7 @@ dependencies:
   #dialogs
   flutter_smart_dialog: ^4.9.2
 
+  fl_country_code_picker: ^0.1.4
 
 dev_dependencies:
   flutter_test:
