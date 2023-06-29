@@ -11,6 +11,8 @@ class AppConstantsText{
   static String continueWithPhone = "Continue With Phone";
   static String donTHaveAnAccount = "Don't have an account?";
   static String noInternetMessage = "Unable to connect to the internet.";
+  static String confirmYourNumber = "Confirm your number.";
+  static String enterTheCode = "Enter the code we sent to the number";
   static String enterYourPhoneNo = "Enter your phone\nnumber.";
   static String sendOTPVerification = "We will send an OTP Verification to you.";
   static String sendMeCode = "Send me the code";
@@ -22,6 +24,7 @@ class AppConstantsText{
   static String someThingWentWrongLottie = "assets/lottie/some_thing_went_wrong.json";
   static String signUpLottie = "assets/lottie/sign_up.json";
   static String loadingLottie = "assets/lottie/loading.json";
+  static String otpLottie = "assets/lottie/otp.json";
   static String tryAgain = "Try Again";
 
 

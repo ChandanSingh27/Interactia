@@ -52,6 +52,7 @@ dependencies:
   flutter_smart_dialog: ^4.9.2
 
   fl_country_code_picker: ^0.1.4
+  pinput: ^2.2.31
 
 dev_dependencies:
   flutter_test:

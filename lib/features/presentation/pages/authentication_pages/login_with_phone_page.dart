@@ -3,8 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:taskhub/features/presentation/manager/internet_checking.dart';
 import 'package:taskhub/features/presentation/manager/login_page_provider.dart';
+import 'package:taskhub/features/presentation/pages/authentication_pages/otp_verification_page.dart';
 import 'package:taskhub/features/presentation/widgets/custom_buttons/custom_button.dart';
+import 'package:taskhub/features/presentation/widgets/custom_dialog/app_dialogs.dart';
+import 'package:taskhub/features/presentation/widgets/left_top_blue_shadow.dart';
 import 'package:taskhub/utility/constants_text.dart';
 import 'package:taskhub/utility/constants_value.dart';
 import '../../../../utility/constants_color.dart';
@@ -25,8 +29,8 @@ class _LoginWithPhoneState extends State<LoginWithPhone> {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = MediaQuery.of(context).platformBrightness ==
-        Brightness.light;
+    final isDark = MediaQuery.of(context).platformBrightness ==
+        Brightness.dark;
 
     final countryPicker = FlCountryCodePicker(
       countryTextStyle: Theme.of(context).textTheme.bodySmall,
@@ -40,7 +44,7 @@ class _LoginWithPhoneState extends State<LoginWithPhone> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(CupertinoIcons.back,color: isLight?AppConstantsColor.black:AppConstantsColor.white,),
+          icon: Icon(CupertinoIcons.back,color: isDark ? AppConstantsColor.white : AppConstantsColor.black,),
         ),
       ),
       body: Padding(
@@ -48,13 +52,19 @@ class _LoginWithPhoneState extends State<LoginWithPhone> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            phoneNumberTextFieldWidget(isLight,countryPicker),
+            phoneNumberTextFieldWidget(isDark,countryPicker),
             Container(
                 margin: const EdgeInsets.only(bottom: 5),
-                child: Consumer<LoginPageProvider>(builder: (context, loginProvider, child) => CustomButton(
+                child: Consumer2<LoginPageProvider,InternetCheckingService>(builder: (context, loginProvider, internetConnection,child) => CustomButton(
                     onTap: () {
-                      loginProvider.toggleEnableSendMeCodeButtonLoader();
-                      Future.delayed(const Duration(seconds: 3),() => loginProvider.toggleEnableSendMeCodeButtonLoader(),);
+                      String countryCodeMobileNumber = loginProvider.countryCode.toString() + phoneController.text.trim();
+                      if(internetConnection.isConnected){
+                        loginProvider.toggleEnableSendMeCodeButtonLoader();
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerificationPage(mobileNumber: countryCodeMobileNumber),));
+                        loginProvider.toggleEnableSendMeCodeButtonLoader();
+                      }else{
+                        AppDialog.noInternetDialog();
+                      }
                     },
                     backgroundColor: AppConstantsColor.blueLight,
                     text: AppConstantsText.sendMeCode,
@@ -66,7 +76,7 @@ class _LoginWithPhoneState extends State<LoginWithPhone> {
     );
   }
 
-  Widget phoneNumberTextFieldWidget(bool isLight, FlCountryCodePicker countryPicker){
+  Widget phoneNumberTextFieldWidget(bool isDark, FlCountryCodePicker countryPicker){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -91,9 +101,9 @@ class _LoginWithPhoneState extends State<LoginWithPhone> {
           padding: EdgeInsets.symmetric(
               horizontal: AppConstants.constantsAppPadding),
           decoration: BoxDecoration(
-              color: isLight
-                  ? AppConstantsColor.grayAsh.withOpacity(0.3)
-                  : AppConstantsColor.blackLight,
+              color: isDark
+                  ? AppConstantsColor.blackLight
+                  : AppConstantsColor.grayAsh.withOpacity(0.3),
               borderRadius: BorderRadius.circular(10)),
           child: Row(
             children: [
@@ -101,7 +111,7 @@ class _LoginWithPhoneState extends State<LoginWithPhone> {
                   onTap: () async{
                     await countryPicker.showPicker(
                       context: context,
-                      backgroundColor: isLight ? AppConstantsColor.darkWhite : AppConstantsColor.matteBlack,
+                      backgroundColor: isDark ? AppConstantsColor.matteBlack : AppConstantsColor.darkWhite,
                       pickerMaxHeight: 600,
                       initialSelectedLocale: 'In',
                       shape: OutlineInputBorder(
@@ -123,7 +133,7 @@ class _LoginWithPhoneState extends State<LoginWithPhone> {
               Expanded(
                 child: Consumer<LoginPageProvider>(builder: (context, loginProvider, child) => TextFormField(
                   controller: phoneController,
-                  style: isLight ? AppConstantTextStyle.formFieldTextStyleBlack() : AppConstantTextStyle.formFieldTextStyleWhite(),
+                  style: isDark ? AppConstantTextStyle.formFieldTextStyleWhite() : AppConstantTextStyle.formFieldTextStyleBlack(),
                   cursorColor: AppConstantsColor.appTextLightShadeColor,
                   keyboardType: TextInputType.phone,
                   textAlignVertical: TextAlignVertical.center,

@@ -8,13 +8,13 @@ class AppConstantTextStyle{
       color: color
   );
 
-  static TextStyle headingMediumSemiBold_28({required Color color}) => TextStyle(
+  static TextStyle headingMediumSemiBold_22({required Color color}) => TextStyle(
       fontSize: 22,
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w600,
       color: color
   );
 
-  static TextStyle bodySmall_18({required Color color}) => TextStyle(
+  static TextStyle bodySmall_14({required Color color}) => TextStyle(
       fontSize: 14,
       color: color
   );
@@ -29,6 +29,7 @@ class AppConstantTextStyle{
   );
   static TextStyle formFieldHintTextStyle() => TextStyle(
       fontSize: 14,
+      fontWeight: FontWeight.normal,
       color: AppConstantsColor.appTextLightShadeColor
   );
   static TextStyle passwordFormFieldTextStyle() => TextStyle(

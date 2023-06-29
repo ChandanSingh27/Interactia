@@ -18,6 +18,7 @@ class FirebaseAuthentication{
        }
     }
 
+
     static void firebaseErrorHandler(String errorCode) {
       print("====> error : $errorCode" );
         switch(errorCode) {

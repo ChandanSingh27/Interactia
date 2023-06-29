@@ -27,8 +27,8 @@ class ThemeProvider with ChangeNotifier{
     ),
     textTheme: TextTheme(
       titleLarge: AppConstantTextStyle.headingLargeBold_28(color: AppConstantsColor.white),
-      titleMedium: AppConstantTextStyle.headingMediumSemiBold_28(color: AppConstantsColor.white),
-      bodySmall: AppConstantTextStyle.bodySmall_18(color: AppConstantsColor.white.withOpacity(0.5))
+      titleMedium: AppConstantTextStyle.headingMediumSemiBold_22(color: AppConstantsColor.white),
+      bodySmall: AppConstantTextStyle.bodySmall_14(color: AppConstantsColor.white.withOpacity(0.5))
     ),
   );
 
@@ -51,8 +51,8 @@ class ThemeProvider with ChangeNotifier{
 
     textTheme: TextTheme(
         titleLarge: AppConstantTextStyle.headingLargeBold_28(color: AppConstantsColor.matteBlack),  
-        titleMedium: AppConstantTextStyle.headingMediumSemiBold_28(color: AppConstantsColor.matteBlack),
-        bodySmall: AppConstantTextStyle.bodySmall_18(color: AppConstantsColor.matteBlack.withOpacity(0.5))
+        titleMedium: AppConstantTextStyle.headingMediumSemiBold_22(color: AppConstantsColor.matteBlack),
+        bodySmall: AppConstantTextStyle.bodySmall_14(color: AppConstantsColor.matteBlack.withOpacity(0.5))
     ),
   );
 

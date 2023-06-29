@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
@@ -56,5 +57,23 @@ class LoginPageProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
+  //otp page method
+  int timerSeconds = 59;
+  bool resendOTPButtonColorEnable = false;
+  startTimer(int seconds){
+    timerSeconds = seconds;
+    timer();
+  }
+  timer(){
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      if(timerSeconds > 0){
+        timerSeconds--;
+        notifyListeners();
+      }else{
+        resendOTPButtonColorEnable = true;
+        notifyListeners();
+        timer.cancel();
+      }
+    });
+  }
 }
