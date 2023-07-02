@@ -44,8 +44,19 @@ class AppConstantsText{
   static String tooManyRequestsMessage = "We're sorry, but we've received too many requests from your Email Address. Please try again later or contact our support team if the problem persists.";
   static String operationNotAllowed = "operation-not-allowed";
   static String userDisabled = "user-disabled";
+  static String phoneNumberInvalid = "Phone Number Invalid";
+  static String phoneNumberInvalidMessage = "Please provide a valid Indian phone number.";
+  static String resendOTP = "Resend OTP";
+  static String verify = "Verify";
+  static String sec = "sec";
+  static String donTReceivedOTP = "Don't received the OTP?";
 
   //internet connection error
   static String internetConnectionFailMessage = "There was a problem connecting to the server.Please check your internet connection.";
   static String internetConnectionFail= "Internet Connection Failed.";
+
+
+
+  //Regular Expressions Pattern
+  static String validPhonePattern = r'^\+91[6789]\d{9}$';
 }
