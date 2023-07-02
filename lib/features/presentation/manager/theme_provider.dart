@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taskhub/utility/constants_text.dart';
 
 import '../../../utility/constants_color.dart';
 import '../../../utility/constants_value.dart';
@@ -14,7 +15,7 @@ class ThemeProvider with ChangeNotifier{
   ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: AppConstantsColor.black,
-    fontFamily: GoogleFonts.poppins().fontFamily,
+    fontFamily: AppConstantsText.appFonts,
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppConstantsColor.blackLight,
@@ -36,7 +37,7 @@ class ThemeProvider with ChangeNotifier{
     brightness: Brightness.light,
     scaffoldBackgroundColor: AppConstantsColor.white,
 
-    fontFamily: GoogleFonts.poppins().fontFamily,
+    fontFamily: AppConstantsText.appFonts,
 
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

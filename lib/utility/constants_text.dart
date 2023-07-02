@@ -1,5 +1,6 @@
 class AppConstantsText{
   static String appName = "Interactia";
+  static String appFonts = "poppins";
   static String login = "Login";
   static String email = "Email";
   static String signup = "Sign up.";
