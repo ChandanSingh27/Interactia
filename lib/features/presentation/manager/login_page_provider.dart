@@ -9,7 +9,7 @@ class LoginPageProvider with ChangeNotifier {
   bool loginButtonLoader = false;
   bool continueWithPhoneButtonLoader = false;
   bool continueWithGoogleButtonLoader = false;
-  bool sendMeCodeLoader = false;
+  bool enableCodeButtonLoader = false;
 
   bool disableSendMeCodeButton = true;
   bool enableContinueWithPhoneButton = true;
@@ -26,10 +26,12 @@ class LoginPageProvider with ChangeNotifier {
     disableSendMeCodeButton = value;
     notifyListeners();
   }
-  toggleEnableSendMeCodeButtonLoader() {
-    sendMeCodeLoader = !sendMeCodeLoader;
+
+  toggleEnableCodeButtonLoader(){
+    enableCodeButtonLoader = !enableCodeButtonLoader;
     notifyListeners();
   }
+
   toggleEnableContinueWithGoogleButtonAndLoader() {
     enableContinueWithGoogleButton = !enableContinueWithGoogleButton;
     continueWithGoogleButtonLoader = !continueWithGoogleButtonLoader;

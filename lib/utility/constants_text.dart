@@ -7,6 +7,7 @@ class AppConstantsText{
   static String password = "Password";
   static String phoneNumber = "Phone Number";
   static String forgetPassword = "Forget Password";
+  static String forgetPasswordMessage = "Don't worry! it happens. Please enter the address associated with your account.";
   static String orContinueWith = "Or Continue With";
   static String continueWithGoogle = "Continue With Google";
   static String continueWithPhone = "Continue With Phone";
@@ -15,8 +16,23 @@ class AppConstantsText{
   static String confirmYourNumber = "Confirm your number.";
   static String enterTheCode = "Enter the code we sent to the number";
   static String enterYourPhoneNo = "Enter your phone\nnumber.";
+  static String createAccount = "Create\nAccount";
   static String sendOTPVerification = "We will send an OTP Verification to you.";
   static String sendMeCode = "Send me the code";
+  static String fullName = "Full Name";
+  static String name = "Name";
+  static String userName = "Username";
+  static String userNameHintText = "User Name";
+  static String mayBeLater = "Maybe Later";
+  static String tryAgain = "Try Again";
+  static String submit = "Submit";
+  static String done = "Done";
+  static String confirmPassword = "Confirm Password";
+  static String dob = "Date Of Birth";
+  static String addAProfilePhoto = "Add a profile photo.";
+  static String addAProfilePhotoMessage = "Add a profile photo so your friends know it's you.";
+  static String takeAPhoto = "Take a photo";
+  static String addFromLibrary = "Add from library";
 
 
   // lottie path
@@ -26,7 +42,10 @@ class AppConstantsText{
   static String signUpLottie = "assets/lottie/sign_up.json";
   static String loadingLottie = "assets/lottie/loading.json";
   static String otpLottie = "assets/lottie/otp.json";
-  static String tryAgain = "Try Again";
+  static String forgetPasswordLottie = "assets/lottie/forget_password_lottie.json";
+  static String sendEmailLottie = "assets/lottie/send_email_lottie.json";
+  static String profilePhotoLottie = "assets/lottie/profile_photo_lottie.json";
+
 
 
   //firebase error code
@@ -41,9 +60,11 @@ class AppConstantsText{
   static String emailAlreadyInUse = "Email Already In Use";
   static String emailAlreadyInUseMessage = "An account with this email address already exists. \nPlease sign in or use a different email.";
   static String tooManyRequests = "Too Many Requests";
-  static String tooManyRequestsMessage = "We're sorry, but we've received too many requests from your Email Address. Please try again later or contact our support team if the problem persists.";
+  static String tooManyRequestsMessage = "We're sorry, but we've received too many requests from your side. Please try again later or contact our support team if the problem persists.";
   static String operationNotAllowed = "operation-not-allowed";
   static String userDisabled = "user-disabled";
+  static String successFullyRestEmailSent = "Successfully Send Email";
+  static String successFullyRestEmailSentMessage = "The Rest password email send successfully. Please check your inbox either if you not get email than check your spam.";
   static String phoneNumberInvalid = "Phone Number Invalid";
   static String phoneNumberInvalidMessage = "Please provide a valid Indian phone number.";
   static String resendOTP = "Resend OTP";

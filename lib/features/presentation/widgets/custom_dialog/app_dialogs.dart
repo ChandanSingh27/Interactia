@@ -90,6 +90,37 @@ class AppDialog {
     },clickMaskDismiss: false);
   }
 
+  static successDialog(BuildContext buildContext,String title,String message,String lottie ){
+    return SmartDialog.show(builder: (context) {
+      bool isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.09),
+        decoration: BoxDecoration(
+          color: isDark ? AppConstantsColor.matteBlack : AppConstantsColor.darkWhite,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Lottie.asset(lottie,height: 100,width: 100),
+              Text(title,style: TextStyle(color: isDark ? AppConstantsColor.darkWhite : AppConstantsColor.matteBlack ,fontWeight: FontWeight.w600),textAlign: TextAlign.center,),
+              const SizedBox(height: 5,),
+              Text(message,style: TextStyle(color: isDark ? AppConstantsColor.darkWhite.withOpacity(0.5) : AppConstantsColor.matteBlack.withOpacity(0.5)),textAlign: TextAlign.center,),
+              const SizedBox(height: 5,),
+              Divider(color: AppConstantsColor.appTextLightShadeColor.withOpacity(0.7),),
+              InkWell(onTap: (){
+                SmartDialog.dismiss();
+                Navigator.pop(buildContext);
+                },child: Container(margin: const EdgeInsets.only(top: 5),alignment: Alignment.center,child: Text(AppConstantsText.done,style: TextStyle(color: AppConstantsColor.blueLight),),),),
+            ],
+          ),
+        ),
+      );
+    },clickMaskDismiss: false);
+  }
+
   static someThingWentWrongDialog(){
     return SmartDialog.show(builder: (context) {
       bool isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
