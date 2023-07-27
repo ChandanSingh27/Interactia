@@ -23,11 +23,18 @@ class LocalStorage {
 
   static void removeUserDetails() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.remove(SharePreferenceConstantText.id);
-    await preferences.remove(SharePreferenceConstantText.name);
-    await preferences.remove(SharePreferenceConstantText.email);
-    await preferences.remove(SharePreferenceConstantText.username);
-    await preferences.remove(SharePreferenceConstantText.imageUrl);
+    preferences.clear();
   }
+
+  static void storeFCMToken({required String fcmToken}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString(SharePreferenceConstantText.fcmToken, fcmToken);
+  }
+
+  static Future<String?> getKeyValue({required String key}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(key);
+  }
+
 
 }

@@ -36,6 +36,10 @@ class AppConstantsText{
   static String successfulAccountCreate = "Successfully Account Create.";
   static String accountCreatedInOurApplication = "Your account successfully created in our application.";
   static String chooseAPhoto = "Choose a photo";
+  static String processing = "Processing...";
+  static String createAccountButton = "Create Account";
+  static String checkingAlreadyRegisterInDatabase = "checking you already register or not in our Database";
+  static String pleaseEnterYourCredentialsToProceeds = "Please enter your credentials to proceeds.";
 
 
   // lottie path
@@ -49,6 +53,7 @@ class AppConstantsText{
   static String sendEmailLottie = "assets/lottie/send_email_lottie.json";
   static String profilePhotoLottie = "assets/lottie/profile_photo_lottie.json";
   static String successfulLottie = "assets/lottie/success_lottie.json";
+  static String processingLottie = "assets/lottie/processing_lottie.json";
 
 
 
@@ -92,5 +97,6 @@ class SharePreferenceConstantText{
   static String id = "id";
   static String name = "name";
   static String imageUrl = "imageUrl";
+  static String fcmToken = "fcmToken";
 
 }

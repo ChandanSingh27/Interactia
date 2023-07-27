@@ -34,10 +34,9 @@ class _ProfilePhotoUploadPageState extends State<ProfilePhotoUploadPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const ScreenBackButton(),
             Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: AppConstants.constantsAppPadding),
+              padding: EdgeInsets.only(
+                  left: AppConstants.constantsAppPadding,right: AppConstants.constantsAppPadding,top: AppConstants.constantsAppPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,

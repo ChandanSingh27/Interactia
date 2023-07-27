@@ -1,6 +1,9 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/route_manager.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -50,14 +53,14 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Lottie.asset("assets/lottie/sign_up.json",width: 200,height: 200),
+                  Lottie.asset(AppConstantsText.signUpLottie,width: 200,height: 200),
                   Text(
                     AppConstantsText.createAccount,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 5,),
                   Text(
-                    "Please enter your credentials to proceeds.",
+                    AppConstantsText.pleaseEnterYourCredentialsToProceeds,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 25,),
@@ -165,16 +168,18 @@ class _SignUpPageState extends State<SignUpPage> {
                 }else if(passwordController.text != confirmPasswordController.text){
                   AppDialog.invalidDialog("Password doesn't Match ", "Please enter the matching password.");
                 }else{
+                  AppDialog.successDialog(AppConstantsText.processing, "Account Creating...", AppConstantsText.processingLottie);
                   getIt.get<FirebaseAuthentication>().createUserAccount(context, emailController.text.trim(), passwordController.text.trim()).then((value) {
                     if(value){
                       LocalStorage.storeUserDetails(id: FirebaseAuth.instance.currentUser!.uid, name: fullNameController.text.trim(), email: emailController.text.trim(), username: usernameController.text.trim());
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ProfilePhotoUploadPage(),));}
-                  });
+                      SmartDialog.dismiss();
+                      Get.offAll(const ProfilePhotoUploadPage(),transition: Transition.rightToLeft,duration: const Duration(seconds: 1));
+                  }});
                 }
               }else{
                 AppDialog.noInternetDialog();
               }
-        }, backgroundColor: AppConstantsColor.blueLight, text: "Create Account", disableButton: false, loader: false),
+        }, backgroundColor: AppConstantsColor.blueLight, text: AppConstantsText.createAccountButton, disableButton: false, loader: false),
       ),
     );
   }

@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskhub/common/list_of_provider.dart';
+import 'package:taskhub/common/local_storage.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
 import 'package:taskhub/features/presentation/manager/theme_provider.dart';
 import 'package:taskhub/features/presentation/pages/authentication_pages/login_page.dart';
@@ -14,6 +17,7 @@ import 'package:taskhub/features/presentation/widgets/custom_dialog/app_dialogs.
 import 'package:taskhub/firebase/push_notification/push_notification.dart';
 import 'package:taskhub/locator.dart';
 import 'package:taskhub/utility/constants_text.dart';
+import 'features/presentation/pages/authentication_pages/sign_up_page_for_google_phone.dart';
 import 'firebase/firebase_options.dart';
 
 void main() async {
@@ -34,6 +38,7 @@ void main() async {
   await getIt.get<InternetCheckingService>().internetConnectionMonitoring();
 
   PushNotification.init();
+  // PushNotification.getToken().then((value) => LocalStorage.storeFCMToken(fcmToken: value!));
 
   runApp(MultiProvider(providers: ListOfAppProvider.listsProvider, child: const InteractiaApp()));
 }
@@ -66,7 +71,7 @@ class _InteractiaAppState extends State<InteractiaApp> {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
 
-      return MaterialApp(
+      return GetMaterialApp(
         title: AppConstantsText.appName,
         debugShowCheckedModeBanner: false,
         themeMode: themeProvider.appThemeMode,
@@ -74,7 +79,8 @@ class _InteractiaAppState extends State<InteractiaApp> {
         theme: themeProvider.lightTheme,
         navigatorObservers: [FlutterSmartDialog.observer],
         builder: FlutterSmartDialog.init(),
-        home: FirebaseAuth.instance.currentUser?.uid != null? HomePage() : LoginPage(),
+        home: FirebaseAuth.instance.currentUser?.uid != null ? HomePage() : LoginPage(),
+        // home: SignUpPageForGooglePhoneLoginMethod(),
       );
     },);
   }

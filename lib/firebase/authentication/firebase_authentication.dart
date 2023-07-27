@@ -2,11 +2,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:get/route_manager.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:taskhub/features/domain/use_cases/user_register_use_case.dart';
 import 'package:taskhub/features/presentation/pages/authentication_pages/otp_verification_page.dart';
+import 'package:taskhub/features/presentation/pages/authentication_pages/sign_up_page.dart';
 import 'package:taskhub/features/presentation/pages/home_page.dart';
+import 'package:taskhub/locator.dart';
 import 'package:taskhub/utility/constants_text.dart';
 
+import '../../features/presentation/pages/authentication_pages/sign_up_page_for_google_phone.dart';
 import '../../features/presentation/widgets/custom_dialog/app_dialogs.dart';
 
 class FirebaseAuthentication {
@@ -70,7 +76,7 @@ class FirebaseAuthentication {
         idToken: googleAuth?.idToken,
       );
       await auth.signInWithCredential(authCredential).then((value) {
-        return Navigator.push(context, CupertinoPageRoute(builder: (context) => const HomePage(),));
+          checkUserAlreadyRegister(value.user!.uid,value.user!.email.toString());
       });
     }on FirebaseAuthException catch(error) {
       firebaseErrorHandler(error.code.toString());
@@ -78,7 +84,21 @@ class FirebaseAuthentication {
     }
 
   }
-
+  Future<void> checkUserAlreadyRegister(String uid,String email) async {
+    try {
+      AppDialog.successDialog(AppConstantsText.processing, AppConstantsText.checkingAlreadyRegisterInDatabase, AppConstantsText.processingLottie);
+      bool? userAlreadyRegister = await getIt.get<UserRegisterUseCase>().call(uid);
+      if(userAlreadyRegister!) {
+        Get.offAll(const HomePage());
+      } else {
+        Get.offAll(SignUpPageForGooglePhoneLoginMethod(email: email,));
+      }
+    }catch (error) {
+      if(kDebugMode) print("checkUserAlreadyRegister ERROR : ${error.toString()}");
+    }finally{
+      SmartDialog.dismiss();
+    }
+  }
   Future<bool> forgetPassword(
       BuildContext context, String email) async {
     try {
