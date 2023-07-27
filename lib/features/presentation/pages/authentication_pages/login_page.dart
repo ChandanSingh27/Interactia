@@ -180,4 +180,14 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    emailFocus.dispose();
+    passwordFocus.dispose();
+  }
 }

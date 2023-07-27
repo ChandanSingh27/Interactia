@@ -58,4 +58,10 @@ class _AppBottomNavigationBarState extends State<AppBottomNavigationBar> {
       ],
     ),);
   }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    widget.screenController.dispose();
+  }
 }

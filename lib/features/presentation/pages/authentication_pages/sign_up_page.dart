@@ -31,7 +31,6 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
-  final TextEditingController bioController = TextEditingController();
 
   FocusNode fullNameFocusNode = FocusNode();
   FocusNode emailFocusNode = FocusNode();
@@ -178,5 +177,22 @@ class _SignUpPageState extends State<SignUpPage> {
         }, backgroundColor: AppConstantsColor.blueLight, text: "Create Account", disableButton: false, loader: false),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    fullNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    usernameController.dispose();
+    fullNameFocusNode.dispose();
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
+    confirmPasswordFocusNode.dispose();
+    usernameFocusNode.dispose();
+
   }
 }
