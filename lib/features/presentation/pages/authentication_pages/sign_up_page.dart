@@ -1,8 +1,10 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:taskhub/common/local_storage.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
 import 'package:taskhub/features/presentation/manager/signup_provider.dart';
 import 'package:taskhub/features/presentation/pages/authentication_pages/profile_photo_upload_page.dart';
@@ -165,7 +167,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   AppDialog.invalidDialog("Password doesn't Match ", "Please enter the matching password.");
                 }else{
                   getIt.get<FirebaseAuthentication>().createUserAccount(context, emailController.text.trim(), passwordController.text.trim()).then((value) {
-                    if(value) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ProfilePhotoUploadPage(),));
+                    if(value){
+                      LocalStorage.storeUserDetails(id: FirebaseAuth.instance.currentUser!.uid, name: fullNameController.text.trim(), email: emailController.text.trim(), username: usernameController.text.trim());
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ProfilePhotoUploadPage(),));}
                   });
                 }
               }else{

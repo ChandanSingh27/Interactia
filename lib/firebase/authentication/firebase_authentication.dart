@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taskhub/features/presentation/pages/authentication_pages/otp_verification_page.dart';
@@ -19,7 +20,7 @@ class FirebaseAuthentication {
       return true;
     } on FirebaseAuthException catch (error) {
       firebaseErrorHandler(error.code.toString());
-      print("error 1 : ${error.toString()}");
+      if(kDebugMode) print("login with email and password  error : ${error.toString()}");
       return false;
     }
   }
@@ -54,20 +55,27 @@ class FirebaseAuthentication {
       return true;
     } on FirebaseAuthException catch (error) {
       firebaseErrorHandler(error.code.toString());
-      print("error 1 : ${error.toString()}");
+      if(kDebugMode) print("verify otp error  : ${error.toString()}");
       return false;
     }
   }
 
   Future<void> googleSigning(BuildContext context) async {
-    GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
-    GoogleSignInAuthentication? googleAuth =
-        await googleSignInAccount?.authentication;
-    AuthCredential authCredential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-    await auth.signInWithCredential(authCredential).then((value) => Navigator.push(context, CupertinoPageRoute(builder: (context) => HomePage(),)));
+    try{
+      GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
+      GoogleSignInAuthentication? googleAuth =
+      await googleSignInAccount?.authentication;
+      AuthCredential authCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      await auth.signInWithCredential(authCredential).then((value) {
+        return Navigator.push(context, CupertinoPageRoute(builder: (context) => const HomePage(),));
+      });
+    }on FirebaseAuthException catch(error) {
+      firebaseErrorHandler(error.code.toString());
+      if(kDebugMode) print("google signing error : ${error.toString()}");
+    }
 
   }
 
@@ -78,7 +86,7 @@ class FirebaseAuthentication {
      return true;
     } on FirebaseAuthException catch (error) {
       firebaseErrorHandler(error.code.toString());
-      print("forget password error : ${error.toString()}");
+      if(kDebugMode) print("forget password error : ${error.toString()}");
       return false;
     }
   }
@@ -91,13 +99,13 @@ class FirebaseAuthentication {
       return true;
     } on FirebaseAuthException catch (error) {
       firebaseErrorHandler(error.code.toString());
-      print("error 1 : ${error.toString()}");
+      if(kDebugMode) print("user created error : ${error.toString()}");
       return false;
     }
   }
 
   static void firebaseErrorHandler(String errorCode) {
-    print("====> error : $errorCode");
+    if(kDebugMode) print("firebase error handler  : $errorCode");
     switch (errorCode) {
       case "invalid-email":
         AppDialog.firebaseAuthExceptionDialog(AppConstantsText.invalidEmail,

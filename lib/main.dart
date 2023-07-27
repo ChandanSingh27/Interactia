@@ -5,9 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:taskhub/common/list_of_provider.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
-import 'package:taskhub/features/presentation/manager/login_page_provider.dart';
-import 'package:taskhub/features/presentation/manager/signup_provider.dart';
 import 'package:taskhub/features/presentation/manager/theme_provider.dart';
 import 'package:taskhub/features/presentation/pages/authentication_pages/login_page.dart';
 import 'package:taskhub/features/presentation/pages/home_page.dart';
@@ -15,7 +14,6 @@ import 'package:taskhub/features/presentation/widgets/custom_dialog/app_dialogs.
 import 'package:taskhub/firebase/push_notification/push_notification.dart';
 import 'package:taskhub/locator.dart';
 import 'package:taskhub/utility/constants_text.dart';
-import 'features/presentation/pages/authentication_pages/profile_photo_upload_page.dart';
 import 'firebase/firebase_options.dart';
 
 void main() async {
@@ -32,18 +30,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   await getIt.get<InternetCheckingService>().internetConnectionMonitoring();
 
   PushNotification.init();
 
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(
-      create: (context) => LoginPageProvider(),
-    ),
-    ChangeNotifierProvider(create: (context) => ThemeProvider(),),
-    ChangeNotifierProvider(create: (context) => SignUpProvider(),),
-    ChangeNotifierProvider.value(value: getIt.get<InternetCheckingService>()),
-  ], child: const InteractiaApp()));
+  runApp(MultiProvider(providers: ListOfAppProvider.listsProvider, child: const InteractiaApp()));
 }
 
 class InteractiaApp extends StatefulWidget {

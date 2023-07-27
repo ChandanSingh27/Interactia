@@ -33,6 +33,9 @@ class AppConstantsText{
   static String addAProfilePhotoMessage = "Add a profile photo so your friends know it's you.";
   static String takeAPhoto = "Take a photo";
   static String addFromLibrary = "Add from library";
+  static String successfulAccountCreate = "Successfully Account Create.";
+  static String accountCreatedInOurApplication = "Your account successfully created in our application.";
+  static String chooseAPhoto = "Choose a photo";
 
 
   // lottie path
@@ -45,6 +48,7 @@ class AppConstantsText{
   static String forgetPasswordLottie = "assets/lottie/forget_password_lottie.json";
   static String sendEmailLottie = "assets/lottie/send_email_lottie.json";
   static String profilePhotoLottie = "assets/lottie/profile_photo_lottie.json";
+  static String successfulLottie = "assets/lottie/success_lottie.json";
 
 
 
@@ -80,4 +84,13 @@ class AppConstantsText{
 
   //Regular Expressions Pattern
   static String validPhonePattern = r'^\+91[6789]\d{9}$';
+}
+
+class SharePreferenceConstantText{
+  static String username = "username";
+  static String email = "email";
+  static String id = "id";
+  static String name = "name";
+  static String imageUrl = "imageUrl";
+
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:taskhub/utility/constants_color.dart';
 import 'package:taskhub/utility/constants_text.dart';
+
+import '../../manager/signup_provider.dart';
 
 class AppDialog {
 
@@ -31,6 +34,39 @@ class AppDialog {
             ),
           ),
         );
+    },clickMaskDismiss: false);
+  }
+
+  static fileUploaderDialog(){
+    return SmartDialog.show(builder: (context) {
+      bool isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.09),
+        decoration: BoxDecoration(
+          color: isDark ? AppConstantsColor.matteBlack : AppConstantsColor.darkWhite,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: isDark?Colors.white:Colors.black,width: 3),
+                ),
+                alignment: Alignment.center,
+                child: Text("${context.watch<SignUpProvider>().fileUploadPercentage.toString()}%",style: Theme.of(context).textTheme.bodySmall),
+              ),
+              const SizedBox(height: 20,),
+              Text("File Uploading.....",style: Theme.of(context).textTheme.bodySmall,)
+            ],
+          ),
+        ),
+      );
     },clickMaskDismiss: false);
   }
 
@@ -90,7 +126,7 @@ class AppDialog {
     },clickMaskDismiss: false);
   }
 
-  static successDialog(BuildContext buildContext,String title,String message,String lottie ){
+  static successDialog(String title,String message,String lottie ){
     return SmartDialog.show(builder: (context) {
       bool isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
       return Container(
@@ -112,7 +148,6 @@ class AppDialog {
               Divider(color: AppConstantsColor.appTextLightShadeColor.withOpacity(0.7),),
               InkWell(onTap: (){
                 SmartDialog.dismiss();
-                Navigator.pop(buildContext);
                 },child: Container(margin: const EdgeInsets.only(top: 5),alignment: Alignment.center,child: Text(AppConstantsText.done,style: TextStyle(color: AppConstantsColor.blueLight),),),),
             ],
           ),

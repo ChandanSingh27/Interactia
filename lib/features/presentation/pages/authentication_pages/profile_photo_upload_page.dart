@@ -1,15 +1,18 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskhub/features/presentation/manager/signup_provider.dart';
 import 'package:taskhub/features/presentation/pages/home_page.dart';
 import 'package:taskhub/features/presentation/widgets/custom_buttons/custom_button.dart';
 import 'package:taskhub/features/presentation/widgets/custom_buttons/screen_back_button.dart';
 import 'package:taskhub/features/presentation/widgets/custom_dialog/app_dialogs.dart';
+import 'package:taskhub/firebase/storage/fireabse_storage.dart';
 import 'package:taskhub/utility/constants_color.dart';
 import 'package:taskhub/utility/constants_text.dart';
 import 'package:taskhub/utility/constants_value.dart';
@@ -82,7 +85,7 @@ class _ProfilePhotoUploadPageState extends State<ProfilePhotoUploadPage> {
                   imageSourceDialog(isDark);
                 },
                 backgroundColor: AppConstantsColor.blueLight,
-                text: "Choose a photo",
+                text: AppConstantsText.chooseAPhoto,
                 disableButton: false,
                 loader: false),
             const SizedBox(
@@ -96,10 +99,9 @@ class _ProfilePhotoUploadPageState extends State<ProfilePhotoUploadPage> {
                         builder: (context) => const HomePage(),
                       ));
                   AppDialog.successDialog(
-                      context,
-                      "Successfully Account Create",
-                      "Your account successfully created in our application.",
-                      "assets/lottie/success_lottie.json");
+                      AppConstantsText.successfulAccountCreate,
+                      AppConstantsText.accountCreatedInOurApplication,
+                      AppConstantsText.successfulLottie);
                 },
                 backgroundColor: AppConstantsColor.darkWhite,
                 text: AppConstantsText.mayBeLater,
@@ -162,31 +164,35 @@ class _ProfilePhotoUploadPageState extends State<ProfilePhotoUploadPage> {
   }
 
   selectProfileImage(ImageSource source, bool isDark) async {
-    final picker = ImagePicker();
-    final cropper = ImageCropper();
-    final image = await picker.pickImage(source: source);
-    CroppedFile? croppedFile = await cropper
-        .cropImage(sourcePath: image!.path, compressQuality: 50, uiSettings: [
-      AndroidUiSettings(
-          activeControlsWidgetColor: AppConstantsColor.blueLight,
-          toolbarWidgetColor:
-              isDark ? AppConstantsColor.white : AppConstantsColor.black,
-          toolbarColor:
-              isDark ? AppConstantsColor.black : AppConstantsColor.white),
-    ]);
-    if (croppedFile != null) {
-      Provider.of<SignUpProvider>(context,listen: false)
-          .updateProfilePhoto(File(croppedFile!.path));
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const HomePage(),
-          ));
-      AppDialog.successDialog(
-          context,
-          "Successfully Account Create.",
-          "Your account successfully created in our application.",
-          "assets/lottie/success_lottie.json");
+    try {
+      final picker = ImagePicker();
+      final cropper = ImageCropper();
+      final image = await picker.pickImage(source: source);
+      CroppedFile? croppedFile = await cropper
+          .cropImage(sourcePath: image!.path, compressQuality: 50, uiSettings: [
+        AndroidUiSettings(
+            activeControlsWidgetColor: AppConstantsColor.blueLight,
+            toolbarWidgetColor:
+                isDark ? AppConstantsColor.white : AppConstantsColor.black,
+            toolbarColor:
+                isDark ? AppConstantsColor.black : AppConstantsColor.white),
+      ]);
+      if (croppedFile != null) {
+        updateProfilePhoto(File(croppedFile.path));
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print("image cropper error : $error");
+      }
     }
+  }
+
+  updateProfilePhoto(File imageFile) {
+    Provider.of<SignUpProvider>(context, listen: false).updateProfilePhoto(imageFile);
+    FirebaseUploadFiles.uploadFile(context, imageFile).then((value){
+          AppDialog.successDialog(AppConstantsText.successfulAccountCreate,AppConstantsText.accountCreatedInOurApplication,AppConstantsText.successfulLottie);
+          Provider.of<SignUpProvider>(context, listen: false).unsetProfilePhoto();
+          Future.delayed(const Duration(seconds: 2),() => Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => const HomePage(),)),);
+    });
   }
 }

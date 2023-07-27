@@ -41,7 +41,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
               AppDialog.invalidDialog("Empty field can't process.", "Please enter the following details.");
             }
             else {
-              getIt.get<FirebaseAuthentication>().forgetPassword(context, forgetEmailController.text.trim()).then((value) {if(value) AppDialog.successDialog(context,AppConstantsText.successFullyRestEmailSent, AppConstantsText.successFullyRestEmailSentMessage, AppConstantsText.sendEmailLottie);});
+              getIt.get<FirebaseAuthentication>().forgetPassword(context, forgetEmailController.text.trim()).then((value) {if(value) AppDialog.successDialog(AppConstantsText.successFullyRestEmailSent, AppConstantsText.successFullyRestEmailSentMessage, AppConstantsText.sendEmailLottie);Navigator.pop(context);});
             }
           }else{
             AppDialog.noInternetDialog();
