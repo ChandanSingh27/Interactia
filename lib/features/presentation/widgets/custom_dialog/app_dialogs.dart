@@ -184,4 +184,29 @@ class AppDialog {
     },clickMaskDismiss: false);
   }
 
+  static processingDialog(String description){
+    return SmartDialog.show(builder: (context) {
+      bool isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.09),
+        decoration: BoxDecoration(
+          color: isDark ? AppConstantsColor.matteBlack : AppConstantsColor.darkWhite,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Lottie.asset(AppConstantsText.processingLottie,height: 100,width: 100),
+              Text(AppConstantsText.processing,style: TextStyle(color: isDark ? AppConstantsColor.darkWhite : AppConstantsColor.matteBlack ,fontWeight: FontWeight.w600),textAlign: TextAlign.center,),
+              const SizedBox(height: 5,),
+              Text(description,style: TextStyle(color: isDark ? AppConstantsColor.darkWhite.withOpacity(0.5) : AppConstantsColor.matteBlack.withOpacity(0.5)),textAlign: TextAlign.center,),
+              ],
+          ),
+        ),
+      );
+    },clickMaskDismiss: false);
+  }
+
 }

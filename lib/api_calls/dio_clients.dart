@@ -23,18 +23,29 @@ class DioApiClient {
   }
 
   Future<Response?> getRequest(String endPoint,String uid) async {
-    Response response;
+    Response? response;
     try{
       response = await dio.get(endPoint,data: {"_id":uid});
+    }on DioException catch(error) {
+      if(kDebugMode) print("Dio Get Request error : ${error.message}");
+    }
+    return response;
+  }
+
+  Future<Response?> postRequest(String endPoint,Map<String,dynamic> userDetailsModel) async {
+    Response response;
+    try{
+      response = await dio.post(endPoint,data: userDetailsModel);
       return response;
     }on DioException catch(error) {
       if(kDebugMode) print("Dio Get Request error : ${error.message}");
     }
   }
-  Future<Response?> postRequest(String endPoint,Map<String,dynamic> userDetailsModel) async {
+
+  Future<Response?> putRequest(String endPoint,Map<String,dynamic> data) async {
     Response response;
     try{
-      response = await dio.post(endPoint,data: userDetailsModel);
+      response = await dio.put(endPoint,data: data);
       return response;
     }on DioException catch(error) {
       if(kDebugMode) print("Dio Get Request error : ${error.message}");

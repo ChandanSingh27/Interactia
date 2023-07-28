@@ -22,4 +22,9 @@ class UserRepoImpl extends UserRepo{
     }
   }
 
+  @override
+  Future<bool?> userProfileLinkUpload(Map<String, dynamic> data) async{
+    return FetchUserData.profileUpload(data);
+  }
+
 }

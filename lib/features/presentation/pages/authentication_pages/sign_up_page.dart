@@ -1,5 +1,8 @@
 
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -20,6 +23,9 @@ import 'package:taskhub/utility/constants_color.dart';
 import 'package:taskhub/utility/constants_text.dart';
 import 'package:taskhub/utility/constants_text_style.dart';
 import 'package:taskhub/utility/constants_value.dart';
+
+import '../../../domain/entities/UserDetailsModel.dart';
+import '../../../domain/use_cases/user_register_use_case.dart';
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -168,13 +174,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 }else if(passwordController.text != confirmPasswordController.text){
                   AppDialog.invalidDialog("Password doesn't Match ", "Please enter the matching password.");
                 }else{
-                  AppDialog.successDialog(AppConstantsText.processing, "Account Creating...", AppConstantsText.processingLottie);
-                  getIt.get<FirebaseAuthentication>().createUserAccount(context, emailController.text.trim(), passwordController.text.trim()).then((value) {
-                    if(value){
-                      LocalStorage.storeUserDetails(id: FirebaseAuth.instance.currentUser!.uid, name: fullNameController.text.trim(), email: emailController.text.trim(), username: usernameController.text.trim());
-                      SmartDialog.dismiss();
-                      Get.offAll(const ProfilePhotoUploadPage(),transition: Transition.rightToLeft,duration: const Duration(seconds: 1));
-                  }});
+                  createNewUser();
                 }
               }else{
                 AppDialog.noInternetDialog();
@@ -199,5 +199,37 @@ class _SignUpPageState extends State<SignUpPage> {
     confirmPasswordFocusNode.dispose();
     usernameFocusNode.dispose();
 
+  }
+
+  createNewUser() {
+    try{
+      AppDialog.processingDialog("Account Creating");
+      getIt.get<FirebaseAuthentication>().createUserAccount(context, emailController.text.trim(), passwordController.text.trim()).then((value) async{
+        if(value) {
+          String? fcm = await LocalStorage.getKeyValue(key: SharePreferenceConstantText.fcmToken);
+          UserDetailsModel model = UserDetailsModel(
+              id: FirebaseAuth.instance.currentUser!.uid,
+              fullName: fullNameController.text.trim(),
+              email: emailController.text.trim(),
+              fcmToken: fcm,
+              username: usernameController.text.trim()
+          );
+          // api calling
+          getIt.get<UserRegisterUseCase>().callUserRegister(model.toJson()).then((value) {
+            if(value!){
+              SmartDialog.dismiss();
+              LocalStorage.storeUserDetails(id: model.id.toString(), name: model.fullName.toString(), email: model.email.toString(), username: model.username.toString());
+              Get.offAll(()=>const ProfilePhotoUploadPage(),transition: Transition.rightToLeft,duration: const Duration(seconds: 1));
+            }else{
+              AppDialog.someThingWentWrongDialog();
+            }
+          });
+        }});
+    }catch(error){
+      if(kDebugMode) print("error occur when create new user chandan : ${error.toString()}");
+      SmartDialog.dismiss();
+    }finally{
+      Future.delayed(Duration(seconds: 5),() => SmartDialog.dismiss(),);
+    }
   }
 }

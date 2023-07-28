@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:taskhub/common/local_storage.dart';
 import 'package:taskhub/features/presentation/manager/app_bottom_navigation_provider.dart';
 import 'package:taskhub/features/presentation/widgets/app_bottom_navigation_bar.dart';
 import 'package:taskhub/utility/constants_color.dart';
+import 'package:taskhub/utility/constants_text.dart';
 
 import 'authentication_pages/login_page.dart';
 
@@ -40,7 +42,8 @@ class _HomePageState extends State<HomePage> {
               height: double.infinity,
               color: Colors.blue,
               child: Center(
-                child: IconButton(onPressed: (){
+                child: IconButton(onPressed: () {
+                  LocalStorage.removeUserDetails();
                   FirebaseAuth.instance.signOut();
                   GoogleSignIn().signOut();
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage(),));
@@ -74,10 +77,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    screenController.dispose();
-  }
 }

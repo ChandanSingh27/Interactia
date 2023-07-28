@@ -1,12 +1,18 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/route_manager.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskhub/common/local_storage.dart';
+import 'package:taskhub/features/domain/use_cases/user_register_use_case.dart';
 import 'package:taskhub/features/presentation/manager/signup_provider.dart';
 import 'package:taskhub/features/presentation/pages/home_page.dart';
 import 'package:taskhub/features/presentation/widgets/custom_buttons/custom_button.dart';
@@ -16,6 +22,8 @@ import 'package:taskhub/firebase/storage/fireabse_storage.dart';
 import 'package:taskhub/utility/constants_color.dart';
 import 'package:taskhub/utility/constants_text.dart';
 import 'package:taskhub/utility/constants_value.dart';
+
+import '../../../../locator.dart';
 
 class ProfilePhotoUploadPage extends StatefulWidget {
   const ProfilePhotoUploadPage({super.key});
@@ -92,11 +100,7 @@ class _ProfilePhotoUploadPageState extends State<ProfilePhotoUploadPage> {
             ),
             CustomButton(
                 onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomePage(),
-                      ));
+                  Get.offAll(()=>const HomePage());
                   AppDialog.successDialog(
                       AppConstantsText.successfulAccountCreate,
                       AppConstantsText.accountCreatedInOurApplication,
@@ -188,10 +192,22 @@ class _ProfilePhotoUploadPageState extends State<ProfilePhotoUploadPage> {
 
   updateProfilePhoto(File imageFile) {
     Provider.of<SignUpProvider>(context, listen: false).updateProfilePhoto(imageFile);
-    FirebaseUploadFiles.uploadFile(context, imageFile).then((value){
-          AppDialog.successDialog(AppConstantsText.successfulAccountCreate,AppConstantsText.accountCreatedInOurApplication,AppConstantsText.successfulLottie);
-          Provider.of<SignUpProvider>(context, listen: false).unsetProfilePhoto();
-          Future.delayed(const Duration(seconds: 2),() => Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => const HomePage(),)),);
+    FirebaseUploadFiles.uploadFile(context, imageFile).then((imageUrl){
+          AppDialog.processingDialog("Saving your profile pic database.");
+          Map<String,dynamic> data = {
+            "_id" : FirebaseAuth.instance.currentUser!.uid,
+            "imageUrl":imageUrl
+          };
+          getIt.get<UserRegisterUseCase>().callUserUploadProfileLink(data).then((value){
+            if(value!){
+              SmartDialog.dismiss();
+              AppDialog.successDialog(AppConstantsText.successfulAccountCreate,AppConstantsText.accountCreatedInOurApplication,AppConstantsText.successfulLottie);
+              Provider.of<SignUpProvider>(context, listen: false).unsetProfilePhoto();
+              LocalStorage.setImageUrl(imageUrl: imageUrl);
+              Future.delayed(const Duration(seconds: 2),() => Get.offAll(()=>const HomePage()),);
+            }
+          });
+          SmartDialog.dismiss();
     });
   }
 }

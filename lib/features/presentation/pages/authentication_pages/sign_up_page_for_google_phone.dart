@@ -130,7 +130,7 @@ class _SignUpPageForGooglePhoneLoginMethodState extends State<SignUpPageForGoogl
             if(emailController.text.isEmpty || usernameController.text.isEmpty || fullNameController.text.isEmpty ){
               AppDialog.invalidDialog("Empty field can't process.", "Please enter the following details.");
             }else{
-              AppDialog.successDialog(AppConstantsText.processing, "Account Creating...", AppConstantsText.processingLottie);
+              AppDialog.processingDialog("Account Creating...");
               String? fcm = await LocalStorage.getKeyValue(key: SharePreferenceConstantText.fcmToken);
               UserDetailsModel model = UserDetailsModel(
                 id: FirebaseAuth.instance.currentUser!.uid,
@@ -139,11 +139,12 @@ class _SignUpPageForGooglePhoneLoginMethodState extends State<SignUpPageForGoogl
                 fcmToken: fcm,
                 username: usernameController.text.trim()
               );
+              // api calling
               getIt.get<UserRegisterUseCase>().callUserRegister(model.toJson()).then((value) {
                 if(value!){
                   LocalStorage.storeUserDetails(id: model.id.toString(), name: model.fullName.toString(), email: model.email.toString(), username: model.username.toString());
                   SmartDialog.dismiss();
-                  Get.offAll(const ProfilePhotoUploadPage(),transition: Transition.rightToLeft,duration: const Duration(seconds: 1));
+                  Get.offAll(()=>const ProfilePhotoUploadPage(),transition: Transition.rightToLeft,duration: const Duration(seconds: 1));
                 }else{
                   AppDialog.someThingWentWrongDialog();
                 }

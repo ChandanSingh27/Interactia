@@ -41,13 +41,7 @@ class FirebaseAuthentication {
               firebaseErrorHandler(error.code.toString());
             },
             codeSent: (verificationId, forceResendingToken) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OtpVerificationPage(
-                        mobileNumber: phoneNumber,
-                        verificationId: verificationId),
-                  ));
+              Get.to(OtpVerificationPage(mobileNumber: phoneNumber, verificationId: verificationId));
             },
             codeAutoRetrievalTimeout: (verificationId) {});
   }
@@ -57,7 +51,9 @@ class FirebaseAuthentication {
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
           verificationId: verificationId, smsCode: otpCode);
-      await auth.signInWithCredential(credential).then((value) => Navigator.push(context, CupertinoPageRoute(builder: (context) => const HomePage(),)));
+      await auth.signInWithCredential(credential).then((value) {
+        checkUserAlreadyRegister(value.user!.uid, "");
+      });
       return true;
     } on FirebaseAuthException catch (error) {
       firebaseErrorHandler(error.code.toString());
@@ -86,12 +82,12 @@ class FirebaseAuthentication {
   }
   Future<void> checkUserAlreadyRegister(String uid,String email) async {
     try {
-      AppDialog.successDialog(AppConstantsText.processing, AppConstantsText.checkingAlreadyRegisterInDatabase, AppConstantsText.processingLottie);
+      AppDialog.processingDialog(AppConstantsText.checkingAlreadyRegisterInDatabase);
       bool? userAlreadyRegister = await getIt.get<UserRegisterUseCase>().call(uid);
       if(userAlreadyRegister!) {
-        Get.offAll(const HomePage());
+        Get.offAll(()=>const HomePage());
       } else {
-        Get.offAll(SignUpPageForGooglePhoneLoginMethod(email: email,));
+        Get.offAll(()=>SignUpPageForGooglePhoneLoginMethod(email: email,));
       }
     }catch (error) {
       if(kDebugMode) print("checkUserAlreadyRegister ERROR : ${error.toString()}");
@@ -147,6 +143,10 @@ class FirebaseAuthentication {
       case "too-many-requests":
         AppDialog.firebaseAuthExceptionDialog(AppConstantsText.tooManyRequests,
             AppConstantsText.tooManyRequestsMessage);
+        return;
+      case "invalid-verification-code":
+        AppDialog.firebaseAuthExceptionDialog(AppConstantsText.invalidVerificationCode,
+            AppConstantsText.invalidVerificationCodeMessage);
         return;
       default:
         AppDialog.someThingWentWrongDialog();

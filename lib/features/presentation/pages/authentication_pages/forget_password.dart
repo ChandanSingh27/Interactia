@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
@@ -41,7 +43,12 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
               AppDialog.invalidDialog("Empty field can't process.", "Please enter the following details.");
             }
             else {
-              getIt.get<FirebaseAuthentication>().forgetPassword(context, forgetEmailController.text.trim()).then((value) {if(value) AppDialog.successDialog(AppConstantsText.successFullyRestEmailSent, AppConstantsText.successFullyRestEmailSentMessage, AppConstantsText.sendEmailLottie);Navigator.pop(context);});
+              getIt.get<FirebaseAuthentication>().forgetPassword(context, forgetEmailController.text.trim()).then((value) {
+                if(value) {
+                  AppDialog.successDialog(AppConstantsText.successFullyRestEmailSent, AppConstantsText.successFullyRestEmailSentMessage, AppConstantsText.sendEmailLottie);
+                  Future.delayed(const Duration(seconds: 2),() => Get.back(),);
+                }}
+              );
             }
           }else{
             AppDialog.noInternetDialog();

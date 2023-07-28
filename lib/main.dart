@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -22,7 +23,7 @@ import 'firebase/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
+  // FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
   setup();
 
   //below code for disable landscape mode in mobile...
@@ -38,7 +39,10 @@ void main() async {
   await getIt.get<InternetCheckingService>().internetConnectionMonitoring();
 
   PushNotification.init();
-  // PushNotification.getToken().then((value) => LocalStorage.storeFCMToken(fcmToken: value!));
+  PushNotification.getToken().then((value) {
+    LocalStorage.storeFCMToken(fcmToken: value!);
+    if(kDebugMode) print("==================> fcm token $value");
+  });
 
   runApp(MultiProvider(providers: ListOfAppProvider.listsProvider, child: const InteractiaApp()));
 }
@@ -56,17 +60,8 @@ class _InteractiaAppState extends State<InteractiaApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    initialization();
   }
 
-  void initialization() async{
-    final provider = Provider.of<InternetCheckingService>(context,listen: false);
-    if(provider.isConnected){
-      await Future.delayed(const Duration(milliseconds: 200),() => FlutterNativeSplash.remove());
-    }else{
-      AppDialog.noInternetDialog();
-    }
-  }
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {

@@ -1,6 +1,8 @@
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
@@ -59,12 +61,18 @@ class _LoginWithPhoneState extends State<LoginWithPhone> {
                       loginProvider.toggleEnableCodeButtonLoader();
                       try{
                         loginProvider.toggleEnableSendMeCodeButton(false);
+                        AppDialog.processingDialog("We sending OTP code in your enter the number");
                         if (RegExp(AppConstantsText.validPhonePattern).hasMatch(countryCodeMobileNumber)) {
-                          getIt.get<FirebaseAuthentication>().loginWithPhoneNumber(context, countryCodeMobileNumber).then((value) => loginProvider.toggleEnableCodeButtonLoader());
+                          getIt.get<FirebaseAuthentication>().loginWithPhoneNumber(context, countryCodeMobileNumber).then((value) {
+                            SmartDialog.dismiss();
+                            return loginProvider.toggleEnableCodeButtonLoader();
+                          });
                         } else {
                           AppDialog.invalidDialog(AppConstantsText.phoneNumberInvalid, AppConstantsText.phoneNumberInvalidMessage);
                         }
-                      }catch(error){}
+                      }catch(error){
+                        if(kDebugMode) print("Error Occur in login with phone number chandan => ${error.toString()}");
+                      }
                       finally{
                         loginProvider.toggleEnableSendMeCodeButton(true);
                       }

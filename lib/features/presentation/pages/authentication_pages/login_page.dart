@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
@@ -98,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton(onPressed: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgetPasswordPage(),));
+                            Get.to(()=>const ForgetPasswordPage(),transition: Transition.rightToLeftWithFade,duration: const Duration(seconds: 1));
                           }, child: Text(AppConstantsText.forgetPassword))
                         ],
                       ),
@@ -110,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                           provider.isLoadingButtonEnable(true);
                           provider.loadingLoaderToggle();
                           getIt.get<FirebaseAuthentication>().loginWithEmailPassword(context ,emailController.text.trim(), passwordController.text.trim()).then((value) {
-                            if(value) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage(),));
+                            if(value) {Get.offAll(()=>const HomePage(),transition: Transition.fadeIn,duration: const Duration(seconds: 2));}
                           });
                           Future.delayed(const Duration(seconds: 2),() => provider.loadingLoaderToggle(),);
                         }else{
@@ -146,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                         return CustomIconButton(onTap: (){
                           try{
                             loginProvider.toggleEnableContinueWithPhoneButtonAndLoader();
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginWithPhone(),));
+                            Get.to(()=>const LoginWithPhone(),transition: Transition.rightToLeftWithFade,duration: const Duration(seconds: 1));
                           }catch(error){
                             print("phone button error$error");
                           }finally{
@@ -171,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Text(AppConstantsText.donTHaveAnAccount,style: isDark ? AppConstantTextStyle.formFieldTextStyleWhite() : AppConstantTextStyle.formFieldTextStyleBlack(),),
                 TextButton(onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpPage(),));
+                  Get.to(()=>const SignUpPage(),transition: Transition.downToUp,duration: const Duration(seconds: 1));
                 }, child: Text(AppConstantsText.signup))
               ],
             )

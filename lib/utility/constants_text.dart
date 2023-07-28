@@ -71,6 +71,8 @@ class AppConstantsText{
   static String tooManyRequests = "Too Many Requests";
   static String tooManyRequestsMessage = "We're sorry, but we've received too many requests from your side. Please try again later or contact our support team if the problem persists.";
   static String operationNotAllowed = "operation-not-allowed";
+  static String invalidVerificationCode = "Invalid Verification Code";
+  static String invalidVerificationCodeMessage = "Please enter the valid verification code or OTP.";
   static String userDisabled = "user-disabled";
   static String successFullyRestEmailSent = "Successfully Send Email";
   static String successFullyRestEmailSentMessage = "The Rest password email send successfully. Please check your inbox either if you not get email than check your spam.";

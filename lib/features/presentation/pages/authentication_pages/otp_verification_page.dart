@@ -2,12 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 import 'package:taskhub/features/presentation/manager/login_page_provider.dart';
 import 'package:taskhub/features/presentation/widgets/custom_buttons/custom_button.dart';
 import 'package:taskhub/features/presentation/widgets/custom_buttons/screen_back_button.dart';
+import 'package:taskhub/features/presentation/widgets/custom_dialog/app_dialogs.dart';
 import 'package:taskhub/firebase/authentication/firebase_authentication.dart';
 import 'package:taskhub/locator.dart';
 import 'package:taskhub/utility/constants_text.dart';
@@ -120,9 +122,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         bottomNavigationBar: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppConstants.constantsAppPadding,vertical: AppConstants.constantsAppPadding),
           child: CustomButton(onTap: (){
-            print('tap');
             if(pinController.text.length == 6){
-              getIt.get<FirebaseAuthentication>().verifyOTP(context, widget.verificationId, pinController.text.trim());
+              AppDialog.processingDialog("Verify you enter code...");
+              getIt.get<FirebaseAuthentication>().verifyOTP(context, widget.verificationId, pinController.text.trim()).then((value) => SmartDialog.dismiss()).catchError((error)=> SmartDialog.dismiss());
             }
           }, backgroundColor: AppConstantsColor.blueLight, text: AppConstantsText.verify, disableButton: false, loader: false),
         ),
