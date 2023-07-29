@@ -12,6 +12,7 @@ import 'package:taskhub/features/presentation/pages/home_page.dart';
 import 'package:taskhub/locator.dart';
 import 'package:taskhub/utility/constants_text.dart';
 
+import '../../common/local_storage.dart';
 import '../../features/presentation/pages/authentication_pages/sign_up_page_for_google_phone.dart';
 import '../../features/presentation/widgets/custom_dialog/app_dialogs.dart';
 
@@ -21,7 +22,7 @@ class FirebaseAuthentication {
   Future<bool> loginWithEmailPassword(
       BuildContext context, String email, String password) async {
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+      await auth.signInWithEmailAndPassword(
           email: email, password: password);
       return true;
     } on FirebaseAuthException catch (error) {
@@ -41,7 +42,7 @@ class FirebaseAuthentication {
               firebaseErrorHandler(error.code.toString());
             },
             codeSent: (verificationId, forceResendingToken) {
-              Get.to(OtpVerificationPage(mobileNumber: phoneNumber, verificationId: verificationId));
+              Get.to(()=>OtpVerificationPage(mobileNumber: phoneNumber, verificationId: verificationId));
             },
             codeAutoRetrievalTimeout: (verificationId) {});
   }
@@ -83,9 +84,17 @@ class FirebaseAuthentication {
   Future<void> checkUserAlreadyRegister(String uid,String email) async {
     try {
       AppDialog.processingDialog(AppConstantsText.checkingAlreadyRegisterInDatabase);
-      bool? userAlreadyRegister = await getIt.get<UserRegisterUseCase>().call(uid);
+      bool? userAlreadyRegister = await getIt.get<UserRegisterUseCase>().userAlreadyRegisterOrNotUseCase(uid);
       if(userAlreadyRegister!) {
-        Get.offAll(()=>const HomePage());
+        getIt.get<UserRegisterUseCase>().fetchingUserDetails(uid).then((value) {
+          LocalStorage.storeUserDetails(id: value!.id.toString(), name: value!.fullName.toString(), email: value!.email.toString(), username: value!.username.toString());
+          if(value.imageUrl!=null) LocalStorage.setImageUrl(imageUrl: value.imageUrl.toString());
+          Get.offAll(()=>const HomePage());
+        }).onError((error, stackTrace) {
+          if(kDebugMode) {
+            print("firebase authentication error 95 : ${error.toString()}");
+          }
+        });
       } else {
         Get.offAll(()=>SignUpPageForGooglePhoneLoginMethod(email: email,));
       }

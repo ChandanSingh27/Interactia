@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:taskhub/features/presentation/manager/app_bottom_navigation_provider.dart';
 
@@ -14,8 +15,10 @@ class AppBottomNavigationBar extends StatefulWidget {
 class _AppBottomNavigationBarState extends State<AppBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Consumer<AppBottomNavigationProvider>(builder: (context, provider, child) => BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.transparent,
       currentIndex: provider.currentIndex,
       onTap: (value) {
         provider.addTrackScreen(value);
@@ -25,13 +28,14 @@ class _AppBottomNavigationBarState extends State<AppBottomNavigationBar> {
       showSelectedLabels: false,
       showUnselectedLabels: false,
       unselectedIconTheme: IconThemeData(
-        color: Colors.white.withOpacity(0.6),
-        size: 24,
-      ),
-      selectedIconTheme: IconThemeData(
-        color: Colors.white,
+        color: isDark?Colors.white.withOpacity(0.6):Colors.black.withOpacity(0.6),
         size: 26,
       ),
+      selectedIconTheme: IconThemeData(
+        color: isDark?Colors.white:Colors.black,
+        size: 28,
+      ),
+      elevation: 0,
       items: const [
         BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.home),
@@ -39,20 +43,24 @@ class _AppBottomNavigationBarState extends State<AppBottomNavigationBar> {
             label: "Home"
         ),
         BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.search,),
-            activeIcon: Icon(CupertinoIcons.search,),
+            icon: Icon(BoxIcons.bx_search),
+            activeIcon: Icon(BoxIcons.bxs_search,),
             label: "search"
         ),
         BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.plus,),
+            icon: Icon(CupertinoIcons.plus_app,),
+            activeIcon: Icon(CupertinoIcons.plus_app_fill,),
             label: "post"
         ),
         BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.archivebox,),
+            icon: Icon(CupertinoIcons.bell,),
+            activeIcon: Icon(CupertinoIcons.bell_fill),
             label: "post"
         ),
         BottomNavigationBarItem(
+
             icon: Icon(CupertinoIcons.profile_circled,),
+            activeIcon: Icon(BoxIcons.bxs_user_circle),
             label: "profile"
         ),
       ],

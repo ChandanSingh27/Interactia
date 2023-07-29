@@ -1,9 +1,12 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:taskhub/features/data/data_sources/fetch_user_data.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
 import 'package:taskhub/features/presentation/manager/login_page_provider.dart';
 import 'package:taskhub/features/presentation/pages/authentication_pages/forget_password.dart';
@@ -16,6 +19,8 @@ import 'package:taskhub/utility/constants_text.dart';
 import 'package:taskhub/utility/constants_value.dart';
 import 'package:taskhub/utility/constants_color.dart';
 import 'package:taskhub/utility/constants_text_style.dart';
+import '../../../../common/local_storage.dart';
+import '../../../domain/use_cases/user_register_use_case.dart';
 import '../../widgets/custom_buttons/custom_button.dart';
 import '../../widgets/custom_buttons/custom_icons_button.dart';
 import 'login_with_phone_page.dart';
@@ -112,7 +117,18 @@ class _LoginPageState extends State<LoginPage> {
                           provider.isLoadingButtonEnable(true);
                           provider.loadingLoaderToggle();
                           getIt.get<FirebaseAuthentication>().loginWithEmailPassword(context ,emailController.text.trim(), passwordController.text.trim()).then((value) {
-                            if(value) {Get.offAll(()=>const HomePage(),transition: Transition.fadeIn,duration: const Duration(seconds: 2));}
+                            if(value) {
+                              print("-----------------${FirebaseAuth.instance.currentUser!.uid}");
+                              getIt.get<UserRegisterUseCase>().fetchingUserDetails(FirebaseAuth.instance.currentUser!.uid).then((value) {
+                                LocalStorage.storeUserDetails(id: value!.id.toString(), name: value!.fullName.toString(), email: value!.email.toString(), username: value!.username.toString());
+                                if(value.imageUrl!=null) LocalStorage.setImageUrl(imageUrl: value.imageUrl.toString());
+                                Get.offAll(()=>const HomePage());
+                              }).onError((error, stackTrace) {
+                                if(kDebugMode) {
+                                  print("firebase authentication error login page 126 : ${error.toString()}");
+                                }
+                              });
+                            }
                           });
                           Future.delayed(const Duration(seconds: 2),() => provider.loadingLoaderToggle(),);
                         }else{

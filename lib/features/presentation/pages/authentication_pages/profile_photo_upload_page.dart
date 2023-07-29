@@ -198,7 +198,7 @@ class _ProfilePhotoUploadPageState extends State<ProfilePhotoUploadPage> {
             "_id" : FirebaseAuth.instance.currentUser!.uid,
             "imageUrl":imageUrl
           };
-          getIt.get<UserRegisterUseCase>().callUserUploadProfileLink(data).then((value){
+          getIt.get<UserRegisterUseCase>().uploadUserProfileLinkUseCase(data).then((value){
             if(value!){
               SmartDialog.dismiss();
               AppDialog.successDialog(AppConstantsText.successfulAccountCreate,AppConstantsText.accountCreatedInOurApplication,AppConstantsText.successfulLottie);

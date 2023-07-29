@@ -7,7 +7,7 @@ class UserRepoImpl extends UserRepo{
   @override
   Future<bool?> userAlreadyRegister(String uid) async{
     try{
-      return FetchUserData.userRegisterOrNot(uid);
+      return FetchUserData.userAlreadyRegisterOrNot(uid);
     }catch(error) {
       if(kDebugMode) print("userAlreadyRegister error : ${error.toString()}");
     }
@@ -16,7 +16,7 @@ class UserRepoImpl extends UserRepo{
   @override
   Future<bool?> userRegister(Map<String,dynamic> model) async{
     try{
-        return FetchUserData.userRegister(model);
+        return FetchUserData.createNewUser(model);
     }catch(error) {
       if(kDebugMode) print("userRegister error : ${error.toString()}");
     }
@@ -25,6 +25,11 @@ class UserRepoImpl extends UserRepo{
   @override
   Future<bool?> userProfileLinkUpload(Map<String, dynamic> data) async{
     return FetchUserData.profileUpload(data);
+  }
+
+  @override
+  Future<UserDetailsModel?> fetchUserDetails(String id) {
+      return FetchUserData.fetchingUserDetails(id);
   }
 
 }

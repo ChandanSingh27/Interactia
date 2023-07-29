@@ -139,16 +139,18 @@ class _SignUpPageForGooglePhoneLoginMethodState extends State<SignUpPageForGoogl
                 fcmToken: fcm,
                 username: usernameController.text.trim()
               );
+              print("######################################################${model.toJson()}");
               // api calling
-              getIt.get<UserRegisterUseCase>().callUserRegister(model.toJson()).then((value) {
+              getIt.get<UserRegisterUseCase>().createNewUserUseCase(model.toJson()).then((value) {
                 if(value!){
                   LocalStorage.storeUserDetails(id: model.id.toString(), name: model.fullName.toString(), email: model.email.toString(), username: model.username.toString());
                   SmartDialog.dismiss();
                   Get.offAll(()=>const ProfilePhotoUploadPage(),transition: Transition.rightToLeft,duration: const Duration(seconds: 1));
                 }else{
                   AppDialog.someThingWentWrongDialog();
-                }
-              });
+                  SmartDialog.dismiss();
+                  }
+              }).onError((error, stackTrace) => SmartDialog.dismiss() as Future<Null>);
             }
           }else{
             AppDialog.noInternetDialog();

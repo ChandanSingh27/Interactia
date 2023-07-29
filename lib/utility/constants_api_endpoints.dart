@@ -3,4 +3,5 @@ class ConstantsApiEndPoints {
   static String alreadyRegisterOrNot = "/users/already-register";
   static String registerUser = "/users/register-user";
   static String profileUpload = "/users/upload-profile-image-url";
+  static String userDetails = "/users/user-details";
 }

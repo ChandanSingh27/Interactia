@@ -1,16 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:taskhub/common/local_storage.dart';
 import 'package:taskhub/features/presentation/manager/app_bottom_navigation_provider.dart';
+import 'package:taskhub/features/presentation/pages/bottomNavigtionBarPages/home_page.dart';
+import 'package:taskhub/features/presentation/pages/bottomNavigtionBarPages/profile_page.dart';
 import 'package:taskhub/features/presentation/widgets/app_bottom_navigation_bar.dart';
 import 'package:taskhub/utility/constants_color.dart';
 import 'package:taskhub/utility/constants_text.dart';
 
 import 'authentication_pages/login_page.dart';
+import 'bottomNavigtionBarPages/notification_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,7 +25,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  PageController screenController = PageController(initialPage: 0);
+  String? username;
+  @override
+  void initState(){
+    // TODO: implement initState
+    super.initState();
+    call();
+    screenController = PageController(initialPage: 0);
+  }
+  call()async{
+    username = await LocalStorage.getKeyValue(key: SharePreferenceConstantText.username);
+    print("==================> $username <============================");
+  }
+  late PageController screenController ;
   @override
   Widget build(BuildContext context) {
     final navigationProvider = Provider.of<AppBottomNavigationProvider>(context);
@@ -41,14 +58,7 @@ class _HomePageState extends State<HomePage> {
               width: double.infinity,
               height: double.infinity,
               color: Colors.blue,
-              child: Center(
-                child: IconButton(onPressed: () {
-                  LocalStorage.removeUserDetails();
-                  FirebaseAuth.instance.signOut();
-                  GoogleSignIn().signOut();
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage(),));
-                }, icon: Icon(Icons.logout)),
-              ),
+              child: const BottomNavigationBarHomePage(),
             ),Container(
               width: double.infinity,
               height: double.infinity,
@@ -59,16 +69,15 @@ class _HomePageState extends State<HomePage> {
               height: double.infinity,
               color: Colors.orange,
               child: Center(child: Text("Post page"),),
-            ),Container(
+            ),SizedBox(
               width: double.infinity,
               height: double.infinity,
-              color: Colors.pink,
-              child: Center(child: Text("Notification page"),),
-            ),Container(
+              child: NotificationPage()
+            ),
+            SizedBox(
               width: double.infinity,
               height: double.infinity,
-              color: Colors.amber,
-              child: Center(child: Text("Profile page"),),
+              child: ProfilePage(),
             ),
           ],
         ),

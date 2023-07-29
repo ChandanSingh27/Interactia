@@ -11,6 +11,7 @@ class LocalStorage {
     await preferences.setString(SharePreferenceConstantText.email, email);
     await preferences.setString(SharePreferenceConstantText.username, username);
   }
+
   static void setImageUrl({required String imageUrl}) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setString(SharePreferenceConstantText.imageUrl, imageUrl);
@@ -28,7 +29,7 @@ class LocalStorage {
 
   static void storeFCMToken({required String fcmToken}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString(SharePreferenceConstantText.fcmToken, fcmToken);
+    await preferences.setString(SharePreferenceConstantText.fcmToken, fcmToken);
   }
 
   static Future<String?> getKeyValue({required String key}) async {

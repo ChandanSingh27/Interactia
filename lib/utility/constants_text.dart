@@ -82,6 +82,7 @@ class AppConstantsText{
   static String verify = "Verify";
   static String sec = "sec";
   static String donTReceivedOTP = "Don't received the OTP?";
+  static String emptyFieldCantProcess = "Don't received the OTP?";
 
   //internet connection error
   static String internetConnectionFailMessage = "There was a problem connecting to the server.Please check your internet connection.";

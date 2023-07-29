@@ -1,11 +1,8 @@
 
-import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get/route_manager.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
@@ -204,7 +201,7 @@ class _SignUpPageState extends State<SignUpPage> {
   createNewUser() {
     try{
       AppDialog.processingDialog("Account Creating");
-      getIt.get<FirebaseAuthentication>().createUserAccount(context, emailController.text.trim(), passwordController.text.trim()).then((value) async{
+      getIt.get<FirebaseAuthentication>().createUserAccount(context, emailController.text.trim(), passwordController.text.trim()).then((value) async {
         if(value) {
           String? fcm = await LocalStorage.getKeyValue(key: SharePreferenceConstantText.fcmToken);
           UserDetailsModel model = UserDetailsModel(
@@ -215,7 +212,7 @@ class _SignUpPageState extends State<SignUpPage> {
               username: usernameController.text.trim()
           );
           // api calling
-          getIt.get<UserRegisterUseCase>().callUserRegister(model.toJson()).then((value) {
+          getIt.get<UserRegisterUseCase>().createNewUserUseCase(model.toJson()).then((value) {
             if(value!){
               SmartDialog.dismiss();
               LocalStorage.storeUserDetails(id: model.id.toString(), name: model.fullName.toString(), email: model.email.toString(), username: model.username.toString());
@@ -223,13 +220,16 @@ class _SignUpPageState extends State<SignUpPage> {
             }else{
               AppDialog.someThingWentWrongDialog();
             }
-          });
-        }});
+          }).onError((error, stackTrace) => SmartDialog.dismiss() as Future<Null>);
+        }else{
+          SmartDialog.dismiss();
+        }
+      }).onError((error, stackTrace) => SmartDialog.dismiss() as Future<Null>);
     }catch(error){
       if(kDebugMode) print("error occur when create new user chandan : ${error.toString()}");
       SmartDialog.dismiss();
     }finally{
-      Future.delayed(Duration(seconds: 5),() => SmartDialog.dismiss(),);
+      // Future.delayed(Duration(seconds: 5),() => ,);
     }
   }
 }

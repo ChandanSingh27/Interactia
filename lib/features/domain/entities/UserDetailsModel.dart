@@ -12,12 +12,14 @@ class UserDetailsModel {
     fullName = json['fullName'];
     email = json['email'];
     username = json['username'];
+    imageUrl = json['imageUrl'];
   }
   String? id;
   String? fcmToken;
   String? fullName;
   String? email;
   String? username;
+  String? imageUrl;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -26,6 +28,7 @@ class UserDetailsModel {
     map['fullName'] = fullName;
     map['email'] = email;
     map['username'] = username;
+    map['imageUrl'] = imageUrl;
     return map;
   }
 
