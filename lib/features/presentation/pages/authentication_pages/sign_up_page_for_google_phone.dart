@@ -16,6 +16,7 @@ import 'package:taskhub/features/presentation/widgets/custom_buttons/custom_butt
 import 'package:taskhub/features/presentation/widgets/custom_buttons/screen_back_button.dart';
 import 'package:taskhub/features/presentation/widgets/custom_dialog/app_dialogs.dart';
 import 'package:taskhub/firebase/authentication/firebase_authentication.dart';
+import 'package:taskhub/firebase/push_notification/push_notification.dart';
 import 'package:taskhub/locator.dart';
 import 'package:taskhub/utility/constants_color.dart';
 import 'package:taskhub/utility/constants_text.dart';
@@ -131,7 +132,7 @@ class _SignUpPageForGooglePhoneLoginMethodState extends State<SignUpPageForGoogl
               AppDialog.invalidDialog("Empty field can't process.", "Please enter the following details.");
             }else{
               AppDialog.processingDialog("Account Creating...");
-              String? fcm = await LocalStorage.getKeyValue(key: SharePreferenceConstantText.fcmToken);
+              String? fcm = await PushNotification.getToken();
               UserDetailsModel model = UserDetailsModel(
                 id: FirebaseAuth.instance.currentUser!.uid,
                 fullName: fullNameController.text.trim(),
@@ -147,9 +148,9 @@ class _SignUpPageForGooglePhoneLoginMethodState extends State<SignUpPageForGoogl
                   SmartDialog.dismiss();
                   Get.offAll(()=>const ProfilePhotoUploadPage(),transition: Transition.rightToLeft,duration: const Duration(seconds: 1));
                 }else{
-                  AppDialog.someThingWentWrongDialog();
                   SmartDialog.dismiss();
-                  }
+                  AppDialog.someThingWentWrongDialog();
+                }
               }).onError((error, stackTrace) => SmartDialog.dismiss() as Future<Null>);
             }
           }else{

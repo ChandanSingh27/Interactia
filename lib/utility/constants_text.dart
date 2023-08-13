@@ -54,6 +54,7 @@ class AppConstantsText{
   static String profilePhotoLottie = "assets/lottie/profile_photo_lottie.json";
   static String successfulLottie = "assets/lottie/success_lottie.json";
   static String processingLottie = "assets/lottie/processing_lottie.json";
+  static String uploadImageLottie = "assets/lottie/upload_image_lottie.json";
 
 
 

@@ -61,13 +61,19 @@ dependencies:
   pinput: ^2.2.31
 
   flutter_native_splash: ^2.3.1
+  flutter_svg: ^2.0.7
+  cached_network_image: ^3.2.3
 
   #for http calls
   dio: ^5.3.0
 
   #for navigations
   get: ^4.6.5
-
+  shimmer: ^3.0.0
+  local_image_provider: ^4.3.0
+  external_path: ^1.0.3
+  flutter_image_compress: ^2.0.4
+  permission_handler:
 dev_dependencies:
   flutter_test:
     sdk: flutter

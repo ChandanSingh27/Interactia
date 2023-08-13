@@ -9,8 +9,12 @@ import '../../../utility/constants_text_style.dart';
 
 class ThemeProvider with ChangeNotifier{
 
-  ThemeMode appThemeMode = ThemeMode.system;
+  ThemeMode appThemeMode = ThemeMode.dark;
 
+  setTheme(ThemeMode mode) {
+    appThemeMode = mode;
+    notifyListeners();
+  }
 
   ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,

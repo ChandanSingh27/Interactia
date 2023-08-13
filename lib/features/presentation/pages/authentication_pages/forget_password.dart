@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
+import 'package:taskhub/features/presentation/manager/theme_provider.dart';
 import 'package:taskhub/features/presentation/widgets/custom_buttons/custom_button.dart';
 import 'package:taskhub/features/presentation/widgets/custom_buttons/screen_back_button.dart';
 import 'package:taskhub/features/presentation/widgets/custom_dialog/app_dialogs.dart';
@@ -59,47 +60,51 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   }
 
   Widget forgetPasswordContent(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Padding(
-      padding: EdgeInsets.all(AppConstants.constantsAppPadding),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Lottie.asset(AppConstantsText.forgetPasswordLottie, height: 250, width: 250),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            AppConstantsText.forgetPassword,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            AppConstantsText.forgetPasswordMessage,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          Consumer<LoginPageProvider>(
-            builder: (context, loginProvider, child) => TextFormField(
-              // controller: phoneController,
-              controller: forgetEmailController,
-              style: isDark ? AppConstantTextStyle.formFieldTextStyleWhite() : AppConstantTextStyle.formFieldTextStyleBlack(),
-              cursorColor: AppConstantsColor.appTextLightShadeColor,
-              decoration: InputDecoration(
-                  hintText: AppConstantsText.email
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child)  {
+        bool isDark = themeProvider.appThemeMode == ThemeMode.dark;
+        return Padding(
+          padding: EdgeInsets.all(AppConstants.constantsAppPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Lottie.asset(AppConstantsText.forgetPasswordLottie, height: 250, width: 250),
+              const SizedBox(
+                height: 20,
               ),
-              onTapOutside: (event) => FocusScope.of(context).unfocus(),
-              onChanged: (value) {
-              },
-            ),
+              Text(
+                AppConstantsText.forgetPassword,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Text(
+                AppConstantsText.forgetPasswordMessage,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Consumer<LoginPageProvider>(
+                builder: (context, loginProvider, child) => TextFormField(
+                  // controller: phoneController,
+                  controller: forgetEmailController,
+                  style: isDark ? AppConstantTextStyle.formFieldTextStyleWhite() : AppConstantTextStyle.formFieldTextStyleBlack(),
+                  cursorColor: AppConstantsColor.appTextLightShadeColor,
+                  decoration: InputDecoration(
+                      hintText: AppConstantsText.email
+                  ),
+                  onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                  onChanged: (value) {
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      }
     );
   }
 }

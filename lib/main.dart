@@ -19,11 +19,11 @@ import 'package:taskhub/firebase/push_notification/push_notification.dart';
 import 'package:taskhub/locator.dart';
 import 'package:taskhub/utility/constants_text.dart';
 import 'features/presentation/pages/authentication_pages/sign_up_page_for_google_phone.dart';
+import 'features/presentation/widgets/shimmer_effect_widget.dart';
 import 'firebase/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
   setup();
 
   //below code for disable landscape mode in mobile...
@@ -75,7 +75,7 @@ class _InteractiaAppState extends State<InteractiaApp> {
         navigatorObservers: [FlutterSmartDialog.observer],
         builder: FlutterSmartDialog.init(),
         home: FirebaseAuth.instance.currentUser?.uid != null ? HomePage() : LoginPage(),
-        // home: SignUpPageForGooglePhoneLoginMethod(),
+        // home: ShimmerEffectWidget(),
       );
     },);
   }

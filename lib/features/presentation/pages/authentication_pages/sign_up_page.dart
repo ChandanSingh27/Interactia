@@ -15,6 +15,7 @@ import 'package:taskhub/features/presentation/widgets/custom_buttons/custom_butt
 import 'package:taskhub/features/presentation/widgets/custom_buttons/screen_back_button.dart';
 import 'package:taskhub/features/presentation/widgets/custom_dialog/app_dialogs.dart';
 import 'package:taskhub/firebase/authentication/firebase_authentication.dart';
+import 'package:taskhub/firebase/push_notification/push_notification.dart';
 import 'package:taskhub/locator.dart';
 import 'package:taskhub/utility/constants_color.dart';
 import 'package:taskhub/utility/constants_text.dart';
@@ -203,7 +204,7 @@ class _SignUpPageState extends State<SignUpPage> {
       AppDialog.processingDialog("Account Creating");
       getIt.get<FirebaseAuthentication>().createUserAccount(context, emailController.text.trim(), passwordController.text.trim()).then((value) async {
         if(value) {
-          String? fcm = await LocalStorage.getKeyValue(key: SharePreferenceConstantText.fcmToken);
+          String? fcm = await PushNotification.getToken();
           UserDetailsModel model = UserDetailsModel(
               id: FirebaseAuth.instance.currentUser!.uid,
               fullName: fullNameController.text.trim(),
@@ -219,6 +220,7 @@ class _SignUpPageState extends State<SignUpPage> {
               Get.offAll(()=>const ProfilePhotoUploadPage(),transition: Transition.rightToLeft,duration: const Duration(seconds: 1));
             }else{
               AppDialog.someThingWentWrongDialog();
+              SmartDialog.dismiss();
             }
           }).onError((error, stackTrace) => SmartDialog.dismiss() as Future<Null>);
         }else{
