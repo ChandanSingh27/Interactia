@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,15 +23,16 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage>
     with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-  TextEditingController postThoughtController = TextEditingController();
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    Provider.of<PostPageProvider>(context, listen: false).getImageFromInternalStorageCamera();
+    Provider.of<PostPageProvider>(context,listen: false).getImageFromInternalStorageCamera();
   }
+  @override
+  bool get wantKeepAlive => true;
+  TextEditingController postThoughtController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +60,7 @@ class _PostPageState extends State<PostPage>
                     child: SizedBox(
                       width: double.infinity,
                       height: double.infinity,
-                      child: postProvider.postImage!=null?Image.file(postProvider.postImage!,fit: BoxFit.contain,):Lottie.asset(AppConstantsText.profilePhotoLottie),
+                      child: postProvider.postImage!=null?Image.file(File(postProvider.postImage!),fit: BoxFit.contain,):Lottie.asset(AppConstantsText.profilePhotoLottie),
                     ),
                   ),
                 ),
@@ -65,7 +68,7 @@ class _PostPageState extends State<PostPage>
                   flex: 3,
                   child: Container(
                     color: AppConstantsColor.matteBlack,
-                    child: GridView.builder(
+                    child: postProvider.images.isNotEmpty ? GridView.builder(
                       gridDelegate:
                       const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4),
@@ -79,11 +82,11 @@ class _PostPageState extends State<PostPage>
                             margin: const EdgeInsets.all(2),
                             height: 300,
                             width: 300,
-                            child: Image.file(postProvider.images[index],fit: BoxFit.cover,),
+                            child: Image.file(File(postProvider.images[index]),fit: BoxFit.cover,),
                           ),
                         );
                       },
-                    )
+                    ): const Center(child: Text("No Image Found. Please use Add button to upload your photos...")),
                   ),
                 ),
               ],
@@ -171,7 +174,7 @@ class _PostPageState extends State<PostPage>
                 isDark ? AppConstantsColor.black : AppConstantsColor.white),
       ]);
       if (croppedFile != null) {
-            // context.watch<PostPageProvider>().setPostImage(Image(image: File(croppedFile.path) as ImageProvider,) as LocalImage);
+            Provider.of<PostPageProvider>(context,listen: false).setPostImage(croppedFile.path);
       }
     } catch (error) {
       if (kDebugMode) {

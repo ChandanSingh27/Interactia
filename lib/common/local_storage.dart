@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utility/constants_text.dart';
@@ -37,5 +39,13 @@ class LocalStorage {
     return preferences.getString(key);
   }
 
+  static Future<void> setPhotoLists({required List<String> cameraPhotoLists}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setStringList(SharePreferenceConstantText.cameraPhotos, cameraPhotoLists);
+  }
 
+  static Future<List<String>?> getKeyListValue({required String key}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getStringList(key);
+  }
 }

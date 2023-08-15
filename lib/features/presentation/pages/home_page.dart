@@ -38,7 +38,6 @@ class _HomePageState extends State<HomePage> {
     screenController = PageController(initialPage: 0);
   }
   late PageController screenController ;
-
   @override
   Widget build(BuildContext context) {
     final navigationProvider = Provider.of<AppBottomNavigationProvider>(context);

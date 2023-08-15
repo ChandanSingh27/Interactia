@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskhub/common/list_of_provider.dart';
 import 'package:taskhub/common/local_storage.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
+import 'package:taskhub/features/presentation/manager/post_page_provider.dart';
 import 'package:taskhub/features/presentation/manager/theme_provider.dart';
 import 'package:taskhub/features/presentation/pages/authentication_pages/login_page.dart';
 import 'package:taskhub/features/presentation/pages/home_page.dart';
@@ -60,6 +61,7 @@ class _InteractiaAppState extends State<InteractiaApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Provider.of<PostPageProvider>(context,listen: false).deleteFolder("Photos");
   }
 
   @override

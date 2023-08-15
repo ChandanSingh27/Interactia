@@ -102,5 +102,6 @@ class SharePreferenceConstantText{
   static String name = "name";
   static String imageUrl = "imageUrl";
   static String fcmToken = "fcmToken";
+  static String cameraPhotos = "cameraPhotos";
 
 }
