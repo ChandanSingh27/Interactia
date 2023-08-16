@@ -4,13 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:taskhub/features/presentation/manager/post_page_provider.dart';
+import 'package:taskhub/features/presentation/manager/theme_provider.dart';
 import 'package:taskhub/utility/constants_text.dart';
 import '../../../../utility/constants_color.dart';
+import '../../../../utility/constants_text_style.dart';
 import '../../../../utility/constants_value.dart';
 import '../../widgets/custom_buttons/custom_button.dart';
 
@@ -24,12 +27,14 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage>
     with AutomaticKeepAliveClientMixin {
 
+  TextEditingController photoCaptions = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Provider.of<PostPageProvider>(context,listen: false).getImageFromInternalStorageCamera();
   }
+
   @override
   bool get wantKeepAlive => true;
   TextEditingController postThoughtController = TextEditingController();
@@ -46,10 +51,11 @@ class _PostPageState extends State<PostPage>
             style:
                 Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 20),
           ),
-          actions: [TextButton(onPressed: () {}, child: const Text("Next"))],
+          actions: [TextButton(onPressed: () {}, child: const Text("share"))],
         ),
-        body: Consumer<PostPageProvider>(
-          builder: (context, postProvider, child) {
+        body: Consumer2<PostPageProvider,ThemeProvider>(
+          builder: (context, postProvider, themeProvider, child) {
+            bool isDark = themeProvider.appThemeMode == ThemeMode.dark;
             return Column(
               children: [
                 Expanded(
@@ -66,27 +72,36 @@ class _PostPageState extends State<PostPage>
                 ),
                 Expanded(
                   flex: 3,
-                  child: Container(
-                    color: AppConstantsColor.matteBlack,
-                    child: postProvider.images.isNotEmpty ? GridView.builder(
-                      gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4),
-                      itemCount: postProvider.images.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: (){
-                            postProvider.setPostImage(postProvider.images[index]);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.all(2),
-                            height: 300,
-                            width: 300,
-                            child: Image.file(File(postProvider.images[index]),fit: BoxFit.cover,),
-                          ),
-                        );
-                      },
-                    ): const Center(child: Text("No Image Found. Please use Add button to upload your photos...")),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Camera Photos",style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 20),),
+                      Expanded(
+                        child: Container(
+                          color: isDark ? AppConstantsColor.matteBlack : AppConstantsColor.white,
+                          child: postProvider.images.isNotEmpty ? GridView.builder(
+                            gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4),
+                            itemCount: postProvider.images.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: (){
+                                  postProvider.setPostImage(postProvider.images[index]);
+                                },
+                                child: Container(
+                                  color: Colors.transparent,
+                                  margin: const EdgeInsets.all(2),
+                                  height: 300,
+                                  width: 300,
+                                  child: Image.file(File(postProvider.images[index]),fit: BoxFit.cover,),
+                                ),
+                              );
+                            },
+                          ): const Center(child: Text("No Image Found. Please use Add button to upload your photos...",textAlign: TextAlign.center,)),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -94,17 +109,25 @@ class _PostPageState extends State<PostPage>
           }
         ),
         floatingActionButton: Consumer<PostPageProvider>(
-          builder: (context, postProvider, child) => FloatingActionButton(
-            onPressed: postProvider.postImage != null
-                ? () => postProvider.unsetPostImage()
-                : () => postImageSourceDialog(isDark),
-            backgroundColor: AppConstantsColor.blueLight,
-            child: Icon(
-              postProvider.postImage != null
-                  ? CupertinoIcons.arrow_up
-                  : CupertinoIcons.add,
-              color: Colors.white,
-            ),
+          builder: (context, postProvider, child) => Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton(
+                onPressed: () => photoCaptionsDialog(),
+                backgroundColor: AppConstantsColor.blueLight,
+                child: const Icon(CupertinoIcons.captions_bubble_fill,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 5,),
+              FloatingActionButton(
+                onPressed: () => postImageSourceDialog(isDark),
+                backgroundColor: AppConstantsColor.blueLight,
+                child: const Icon(CupertinoIcons.add,
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
         ));
   }
@@ -183,69 +206,50 @@ class _PostPageState extends State<PostPage>
     }
   }
 
-  /*
-  * body: Column(
-        children: [
-          Expanded(
-            flex: 4,
-              child: GestureDetector(
-                onTap: () => postImageSourceDialog(isDark),
-                child: Consumer<PostPageProvider>(
-                  builder: (context, postProvider, child) {
-                    return postProvider.postImage != null ? SizedBox(
-                      child: InteractiveViewer(
-                          minScale: 0.5,
-                          maxScale: 4.0,
-                          child: Image.file(postProvider.postImage!,fit: BoxFit.cover,)),
-                    ) : SizedBox(
-                      child: SingleChildScrollView(
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Lottie.asset(AppConstantsText.uploadImageLottie),
-                              const Text("Click to browser image")
-                            ],
-                          ),
-                        ),
+  photoCaptionsDialog() {
+    return SmartDialog.show(builder: (context) {
+      return Consumer2<ThemeProvider,PostPageProvider>(
+        builder: (context, themeProvider, postProvider, child) {
+          bool isDark = themeProvider.appThemeMode == ThemeMode.dark;
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.09),
+            decoration: BoxDecoration(
+              color: isDark ? AppConstantsColor.matteBlack : AppConstantsColor.darkWhite,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Photo Captions",style: Theme.of(context).textTheme.bodyMedium,),
+                  const SizedBox(height: 10,),
+                  if(postProvider.postImage != null) Image.file(File(postProvider.postImage!),width: 100,height: 100,),
+                  Container(
+                    color: Colors.transparent,
+                    height: 80,
+                    child: TextField(
+                      style: isDark ? AppConstantTextStyle.formFieldTextStyleWhite() : AppConstantTextStyle.formFieldTextStyleBlack(),
+                      controller: photoCaptions,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: Colors.transparent,
+                        border: InputBorder.none,
+                        hintText: "write a captions...",
                       ),
-                    );
-                  },
-                ),
-              ),
-          ),
-          Expanded(
-            flex: 1,
-              child: Container(
-                padding: EdgeInsets.all(AppConstants.constantsAppPadding),
-                width: double.infinity,
-                height: double.infinity,
-                color: AppConstantsColor.matteBlack,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("say something about this photo...",style: Theme.of(context).textTheme.bodySmall,),
-                      const SizedBox(height: 10,),
-                      TextField(
-                        controller: postThoughtController,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        onTapOutside: (event) => FocusScope.of(context).unfocus(),
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.zero,
-                          hintText: "Type here"
-                        ),
-                        style: isDark ? AppConstantTextStyle.formFieldTextStyleWhite() : AppConstantTextStyle.formFieldTextStyleBlack(),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              )
-          )
-        ],
-      ),
-      ,*/
+                  Divider(color: AppConstantsColor.appTextLightShadeColor.withOpacity(0.7),),
+                  InkWell(onTap: (){SmartDialog.dismiss();},child: Container(margin: const EdgeInsets.only(top: 5),alignment: Alignment.center,child: Text(AppConstantsText.done,style: TextStyle(color: AppConstantsColor.blueLight),),),),
+                ],
+              ),
+            ),
+          );
+        }
+      );
+    });
+  }
+
 }

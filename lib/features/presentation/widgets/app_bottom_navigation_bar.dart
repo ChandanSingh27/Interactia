@@ -34,10 +34,11 @@ class _AppBottomNavigationBarState extends State<AppBottomNavigationBar> {
             color: isDark
                 ? Colors.white.withOpacity(0.6)
                 : Colors.black.withOpacity(0.6),
-            size: 26,
+            size: 28,
           ),
           selectedIconTheme: IconThemeData(
             color: isDark ? Colors.white : Colors.black,
+            size: 28,
           ),
           elevation: 0,
           items: const [

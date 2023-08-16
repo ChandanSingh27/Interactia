@@ -12,6 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:taskhub/common/file_opreations.dart';
 import 'package:taskhub/common/local_storage.dart';
 import 'package:taskhub/features/domain/entities/UserDetailsModel.dart';
 import 'package:taskhub/features/domain/use_cases/user_register_use_case.dart';
@@ -68,6 +69,7 @@ class _ProfilePageState extends State<ProfilePage>
                         LocalStorage.removeUserDetails();
                         FirebaseAuth.instance.signOut();
                         GoogleSignIn().signOut();
+                        FileOperations.deleteFolder(folderName: "UserProfileDetails");
                         Get.offAll(() => const LoginPage());
                       },
                       icon: Icon(Icons.logout,

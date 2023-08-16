@@ -8,6 +8,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskhub/common/file_opreations.dart';
 import 'package:taskhub/common/list_of_provider.dart';
 import 'package:taskhub/common/local_storage.dart';
 import 'package:taskhub/features/presentation/manager/internet_checking.dart';
@@ -26,7 +27,6 @@ import 'firebase/firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setup();
-
   //below code for disable landscape mode in mobile...
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -57,17 +57,17 @@ class InteractiaApp extends StatefulWidget {
 
 class _InteractiaAppState extends State<InteractiaApp> {
 
+  String? appTheme;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Provider.of<PostPageProvider>(context,listen: false).deleteFolder("Photos");
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
-
       return GetMaterialApp(
         title: AppConstantsText.appName,
         debugShowCheckedModeBanner: false,

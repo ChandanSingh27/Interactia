@@ -83,6 +83,7 @@ class PostPageProvider with ChangeNotifier {
         XFile? file = await FlutterImageCompress.compressAndGetFile(element.path,"$compressPhotoPath/img${Random.secure().nextInt(221324)}.jpg", quality: 30);
         if (file != null) {
           images.add(file.path.toString());
+          if(images.length==1) postImage = images[0];
           notifyListeners();
         }
       }

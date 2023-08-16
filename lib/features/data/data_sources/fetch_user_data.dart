@@ -1,11 +1,8 @@
 
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:taskhub/api_calls/dio_clients.dart';
+import 'package:taskhub/common/file_opreations.dart';
 import 'package:taskhub/features/domain/entities/UserDetailsModel.dart';
 import 'package:taskhub/locator.dart';
 import 'package:taskhub/utility/constants_api_endpoints.dart';
@@ -33,20 +30,18 @@ class FetchUserData {
 
   static Future<UserDetailsModel?> fetchingUserDetails (String id) async {
     UserDetailsModel? userDetailsModel;
-    String userFile = "userDetails.json";
-    final tempDic = await getTemporaryDirectory();
-    var file = File("${tempDic.path}/$userFile");
+    String userFile = "user.json";
+    var folderPath = await FileOperations.createFolder(folderName: "UserProfileDetails");
+    var file = File("$folderPath/$userFile");
     if(file.existsSync()) {
-      var json = file.readAsStringSync();
-      return UserDetailsModel.fromJson(jsonDecode(json));
-    }else{
+      return UserDetailsModel.fromJson(FileOperations.readJsonDataIntoFile(filePath: folderPath, fileName: userFile));
+    } else{
       final response = await getIt.get<DioApiClient>().getRequest(ConstantsApiEndPoints.userDetails, id);
       if (response?.statusCode == 200){
-        await file.writeAsString(jsonEncode(response!.data['user']).toString(),flush: true,mode: FileMode.write);
+        FileOperations.writeJsonDataIntoFile(filePath: folderPath, fileName: userFile, data: response!.data['user']);
         return UserDetailsModel.fromJson(response!.data['user']);
       }
     }
-
     return userDetailsModel;
   }
 }

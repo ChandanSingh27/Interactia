@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskhub/common/local_storage.dart';
 import 'package:taskhub/utility/constants_text.dart';
 
 import '../../../utility/constants_color.dart';
@@ -11,11 +13,17 @@ class ThemeProvider with ChangeNotifier{
 
   ThemeMode appThemeMode = ThemeMode.dark;
 
-  setTheme(ThemeMode mode) {
+  setTheme(ThemeMode mode) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString("theme",mode==ThemeMode.dark ? "dark":"light");
     appThemeMode = mode;
     notifyListeners();
   }
 
+  Future<String?> getTheme() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString("theme");
+  }
   ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: AppConstantsColor.black,
